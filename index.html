@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iDDI Concept</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://code.iconify.design/iconify-icon/1.0.2/iconify-icon.min.js"></script>
+</head>
+<body data-lang="ru">
+    <div class="container">
+        <!-- Верхний бар -->
+        <div class="top-bar">
+            <div class="logo">
+                <img src="logo_inline.png" alt="Inline Telecom Solutions Logo">
+            </div>
+            <div class="controls">
+                <div class="search-bar">
+                    <iconify-icon icon="eva:search-outline"></iconify-icon>
+                    <input type="text" id="page-search" data-lang-placeholder="ru:Фильтр виджетов...|en:Filter widgets...">
+                </div>
+                <div class="theme-switch">
+                    <div class="knob"></div>
+                </div>
+                <div class="icon-btn" id="bell-icon">
+                    <iconify-icon icon="clarity:notification-line"></iconify-icon>
+                    <div id="notification-popup" class="popup-menu">
+                        <span data-lang-text="ru:Новых уведомлений нет|en:No new notifications"></span>
+                    </div>
+                </div>
+                <div class="icon-btn" id="lang-switcher">
+                    <iconify-icon icon="clarity:world-line"></iconify-icon>
+                </div>
+                <div class="user-profile" id="user-avatar">
+                     <div id="profile-dropdown" class="popup-menu profile-dropdown">
+                        <a href="#" id="profile-settings-btn"><iconify-icon icon="clarity:cog-line"></iconify-icon><span data-lang-text="ru:Настройки профиля|en:Profile Settings"></span></a>
+                        <a href="#"><iconify-icon icon="clarity:logout-line"></iconify-icon><span data-lang-text="ru:Выход|en:Logout"></span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Основной контент -->
+        <div class="main-content">
+            <!-- Левая боковая панель -->
+            <div class="sidebar">
+                 <div class="main-menu-item active" data-target="dashboards-widgets">
+                    <iconify-icon icon="pajamas:dashboard"></iconify-icon>
+                    <span class="title" data-lang-text="ru:Дашборды|en:Dashboards"></span>
+                </div>
+                <div class="main-menu-item" data-target="idns-widgets">
+                    <iconify-icon icon="eos-icons:dns"></iconify-icon>
+                    <span class="title" data-lang-text="ru:iDNS|en:iDNS"></span>
+                </div>
+                <div class="main-menu-item" data-target="idhcp-widgets">
+                    <iconify-icon icon="hugeicons:web-security"></iconify-icon>
+                    <span class="title" data-lang-text="ru:iDHCP|en:iDHCP"></span>
+                </div>
+                <div class="main-menu-item" data-target="ipam-widgets">
+                    <iconify-icon icon="eos-icons:ip"></iconify-icon>
+                    <span class="title" data-lang-text="ru:IPAM|en:IPAM"></span>
+                </div>
+                <div class="main-menu-item" data-target="admin-widgets">
+                    <iconify-icon icon="eos-icons:admin-outlined"></iconify-icon>
+                    <span class="title" data-lang-text="ru:Панель Админа|en:Admin Panel"></span>
+                </div>
+                <div class="main-menu-item" data-target="settings-widgets">
+                    <iconify-icon icon="ri:settings-4-fill"></iconify-icon>
+                    <span class="title" data-lang-text="ru:Настройки|en:Settings"></span>
+                </div>
+                <div class="main-menu-item" data-target="logs-widgets">
+                    <iconify-icon icon="octicon:log-16"></iconify-icon>
+                    <span class="title" data-lang-text="ru:Логи|en:Logs"></span>
+                </div>
+            </div>
+
+            <!-- Контейнер для переключаемых областей -->
+            <div class="content-wrapper">
+                <!-- Область с виджетами -->
+                <div class="widget-area page-area active">
+                    <!-- Группа виджетов для Dashboards -->
+                    <div class="widget-group active" id="dashboards-widgets">
+                        <div class="widget"><iconify-icon icon="mdi:format-list-checks"></iconify-icon><p data-lang-text="ru:Задачи|en:Tasks"></p></div>
+                        <div class="widget"><iconify-icon icon="ic:outline-monitor"></iconify-icon><p data-lang-text="ru:Монитор|en:Monitor"></p></div>
+                        <div class="widget"><iconify-icon icon="clarity:settings-line"></iconify-icon><p data-lang-text="ru:Настройки виджетов|en:Widget settings"></p></div>
+                    </div>
+                    <!-- Группа виджетов для iDNS -->
+                    <div class="widget-group" id="idns-widgets">
+                        <div class="widget"><iconify-icon icon="mdi:dns-outline"></iconify-icon><p data-lang-text="ru:Зоны DNS|en:DNS Zones"></p></div>
+                        <div class="widget"><iconify-icon icon="material-symbols:note-outline"></iconify-icon><p data-lang-text="ru:Ресурсные записи|en:Resource Records"></p></div>
+                        <div class="widget"><iconify-icon icon="mdi:shield-check-outline"></iconify-icon><p data-lang-text="ru:DNSSEC|en:DNSSEC"></p></div>
+                        <div class="widget"><iconify-icon icon="iconoir:pc-firewall"></iconify-icon><p data-lang-text="ru:DNS Firewall|en:DNS Firewall"></p></div>
+                        <div class="widget"><iconify-icon icon="mdi:database-search-outline"></iconify-icon><p data-lang-text="ru:Журнал запросов|en:Query Log"></p></div>
+                        <div class="widget"><iconify-icon icon="tabler:template"></iconify-icon><p data-lang-text="ru:Шаблоны зоны|en:Zone Templates"></p></div>
+                        <div class="widget"><iconify-icon icon="mdi:swap-horizontal-bold"></iconify-icon><p data-lang-text="ru:Переадресации|en:Forwarding"></p></div>
+                        <div class="widget"><iconify-icon icon="carbon:subnet-acl-rules"></iconify-icon><p data-lang-text="ru:Именованые ACL|en:Named ACLs"></p></div>
+                        <div class="widget"><iconify-icon icon="akar-icons:statistic-up"></iconify-icon><p data-lang-text="ru:Статистика DNS|en:DNS Statistics"></p></div>
+                    </div>
+                    <!-- Группа виджетов для iDHCP -->
+                    <div class="widget-group" id="idhcp-widgets">
+                        <div class="widget"><iconify-icon icon="bx:layer"></iconify-icon><p data-lang-text="ru:Диапазоны|en:Ranges"></p></div>
+                        <div class="widget"><iconify-icon icon="bx:time-five"></iconify-icon><p data-lang-text="ru:Аренды|en:Leases"></p></div>
+                        <div class="widget"><iconify-icon icon="clarity:host-line"></iconify-icon><p data-lang-text="ru:Резервации|en:Reservations"></p></div>
+                        <div class="widget"><iconify-icon icon="mdi:cog-outline"></iconify-icon><p data-lang-text="ru:Опции DHCP|en:DHCP Options"></p></div>
+                        <div class="widget"><iconify-icon icon="fluent:database-plug-connected-20-regular"></iconify-icon><p data-lang-text="ru:Отказоустойчивость|en:Failover"></p></div>
+                        <div class="widget"><iconify-icon icon="cib:matrix"></iconify-icon><p data-lang-text="ru:Политики аренды|en:Lease Policies"></p></div>
+                        <div class="widget"><iconify-icon icon="tabler:route-2"></iconify-icon><p data-lang-text="ru:Relay-агенты|en:Relay Agents"></p></div>
+                        <div class="widget"><iconify-icon icon="akar-icons:statistic-up"></iconify-icon><p data-lang-text="ru:Статистика DHCP|en:DHCP Statistics"></p></div>
+                    </div>
+                    <!-- Группа виджетов для IPAM -->
+                    <div class="widget-group" id="ipam-widgets">
+                        <div class="widget"><iconify-icon icon="carbon:network-2"></iconify-icon><p data-lang-text="ru:Схемы сети|en:Network views"></p></div>
+                        <div class="widget"><iconify-icon icon="mdi:lan-pending"></iconify-icon><p data-lang-text="ru:VLANs|en:VLANs"></p></div>
+                        <div class="widget"><iconify-icon icon="clarity:vm-line"></iconify-icon><p data-lang-text="ru:Superhost|en:Superhost"></p></div>
+                        <div class="widget"><iconify-icon icon="fluent:document-data-24-regular"></iconify-icon><p data-lang-text="ru:Доп. атрибуты|en:Extensible attributes"></p></div>
+                        <div class="widget"><iconify-icon icon="carbon:report"></iconify-icon><p data-lang-text="ru:Отчеты|en:Reports"></p></div>
+                    </div>
+                    <!-- Группа виджетов для Admin Panel -->
+                    <div class="widget-group" id="admin-widgets">
+                        <div class="widget"><iconify-icon icon="clarity:users-line"></iconify-icon><p data-lang-text="ru:Пользователи|en:Users"></p></div>
+                        <div class="widget"><iconify-icon icon="clarity:group-line"></iconify-icon><p data-lang-text="ru:Группы|en:Groups"></p></div>
+                        <div class="widget"><iconify-icon icon="fluent:key-24-regular"></iconify-icon><p data-lang-text="ru:Права|en:Permissions"></p></div>
+                        <div class="widget"><iconify-icon icon="clarity:assign-user-line"></iconify-icon><p data-lang-text="ru:Роли|en:Roles"></p></div>
+                        <div class="widget"><iconify-icon icon="mdi:shield-key-outline"></iconify-icon><p data-lang-text="ru:Политика аутентификации|en:Auth Policy"></p></div>
+                        <div class="widget"><iconify-icon icon="carbon:server-proxy"></iconify-icon><p data-lang-text="ru:Серверы аутентификации|en:Auth Servers"></p></div>
+                        <div class="widget"><iconify-icon icon="mdi:account-key-outline"></iconify-icon><p data-lang-text="ru:Пользователи SNMPv3|en:SNMPv3 Users"></p></div>
+                        <div class="widget"><iconify-icon icon="fluent:document-search-24-regular"></iconify-icon><p data-lang-text="ru:Журнал аудита|en:Audit Log"></p></div>
+                    </div>
+                    <!-- Группа виджетов для Settings -->
+                    <div class="widget-group" id="settings-widgets">
+                        <div class="widget"><iconify-icon icon="carbon:document-preliminary"></iconify-icon><p data-lang-text="ru:Распространение файлов|en:File Distribution"></p></div>
+                        <div class="widget"><iconify-icon icon="clarity:notification-outline-badged"></iconify-icon><p data-lang-text="ru:Уведомления|en:Notifications"></p></div>
+                        <div class="widget"><iconify-icon icon="ant-design:api-outlined"></iconify-icon><p data-lang-text="ru:Интеграции|en:Integrations"></p></div>
+                        <div class="widget"><iconify-icon icon="carbon:update-now"></iconify-icon><p data-lang-text="ru:Обновления|en:Updates"></p></div>
+                        <div class="widget"><iconify-icon icon="ic:outline-backup"></iconify-icon><p data-lang-text="ru:Резервное копирование|en:Backup"></p></div>
+                    </div>
+                    <!-- Группа виджетов для Logs -->
+                    <div class="widget-group" id="logs-widgets">
+                        <div class="widget"><iconify-icon icon="carbon:document-export"></iconify-icon><p data-lang-text="ru:Экспорт логов|en:Export logs"></p></div>
+                        <div class="widget"><iconify-icon icon="mdi:file-document-outline"></iconify-icon><p data-lang-text="ru:Syslog|en:Syslog"></p></div>
+                        <div class="widget"><iconify-icon icon="mdi:shield-lock-outline"></iconify-icon><p data-lang-text="ru:События безопасности|en:Security Events"></p></div>
+                    </div>
+                </div>
+
+                <!-- Страница настроек профиля -->
+                <div id="profile-page" class="page-area">
+                    <div class="profile-menu">
+                        <a href="#" class="profile-menu-item active" data-target="profile-main-data-section">Основные данные</a>
+                        <a href="#" class="profile-menu-item" data-target="profile-interface-section">Интерфейс</a>
+                        <a href="#" class="profile-menu-item" data-target="profile-history-section">История авторизаций</a>
+                    </div>
+                    <div class="profile-content">
+                        <div id="profile-main-data-section" class="profile-section active">
+                            <h2><span data-lang-text="ru:Основные данные|en:Main Data"></span></h2>
+                            <div class="form-group">
+                                <label for="fullName" data-lang-text="ru:Имя пользователя|en:Full Name"></label>
+                                <input type="text" id="fullName" value="Ivan I." readonly>
+                            </div>
+                            <div class="form-group">
+                                <label data-lang-text="ru:Тип учётной записи|en:Account Type"></label>
+                                <span class="read-only-field" data-lang-text="ru:Администратор|en:Administrator"></span>
+                            </div>
+                            <div class="form-group">
+                                <label data-lang-text="ru:Группа|en:Group"></label>
+                                <span class="read-only-field" data-lang-text="ru:Отдел разработки|en:Development Department"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="email" data-lang-text="ru:E-mail|en:E-mail"></label>
+                                <input type="email" id="email" value="ivan.i@example.com">
+                            </div>
+                            <div class="form-group">
+                                <button id="changePasswordBtn" class="btn" data-lang-text="ru:Смена пароля|en:Change Password"></button>
+                            </div>
+
+                            <div id="passwordChangeForm" class="hidden password-form">
+                                <h3><span data-lang-text="ru:Смена пароля|en:Change Password"></span></h3>
+                                <div class="form-group">
+                                    <label for="currentPassword" data-lang-text="ru:Текущий пароль|en:Current Password"></label>
+                                    <input type="password" id="currentPassword">
+                                </div>
+                                <div class="form-group">
+                                    <label for="newPassword" data-lang-text="ru:Новый пароль|en:New Password"></label>
+                                    <input type="password" id="newPassword">
+                                    <div class="password-strength-indicator">
+                                        <div class="strength-bar"></div>
+                                        <div class="strength-bar"></div>
+                                        <div class="strength-bar"></div>
+                                        <div class="strength-bar"></div>
+                                    </div>
+                                    <span class="password-hint" data-lang-text="ru:Пароль должен содержать не менее 8 символов, включая заглавные и строчные буквы, цифры и спецсимволы.|en:Password must be at least 8 characters long, including uppercase and lowercase letters, numbers, and special characters."></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="confirmPassword" data-lang-text="ru:Подтверждение пароля|en:Confirm Password"></label>
+                                    <input type="password" id="confirmPassword">
+                                </div>
+                                <div class="form-actions">
+                                    <button class="btn btn-primary" data-lang-text="ru:Сохранить пароль|en:Save Password" style="padding: 6px 12px; font-size: 13px;"></button>
+                                    <button class="btn btn-secondary" data-lang-text="ru:Отмена|en:Cancel" style="padding: 6px 12px; font-size: 13px;"></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="profile-interface-section" class="profile-section">
+                            <h2><span data-lang-text="ru:Настройки интерфейса|en:Interface Settings"></span></h2>
+                            <div class="form-group">
+                                <label for="homeDashboard" data-lang-text="ru:Домашний дашборд|en:Home Dashboard"></label>
+                                <select id="homeDashboard">
+                                    <option value="dashboards-widgets" data-lang-text="ru:Дашборды|en:Dashboards"></option>
+                                    <option value="idns-widgets" data-lang-text="ru:iDNS|en:iDNS"></option>
+                                    <option value="idhcp-widgets" data-lang-text="ru:iDHCP|en:iDHCP"></option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="widgetLimit" data-lang-text="ru:Лимит виджетов|en:Widget Limit"></label>
+                                <input type="number" id="widgetLimit" min="5" max="20" value="10">
+                                <span class="password-hint" data-lang-text="ru:Максимум элементов на дашборде (от 5 до 20)|en:Maximum elements on dashboard (from 5 to 20)"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="timeZone" data-lang-text="ru:Часовой пояс|en:Time Zone"></label>
+                                <select id="timeZone">
+                                    <option value="Europe/Moscow" data-lang-text="ru:Москва (UTC+3)|en:Moscow (UTC+3)"></option>
+                                    <option value="America/New_York" data-lang-text="ru:Нью-Йорк (UTC-5)|en:New York (UTC-5)"></option>
+                                    <option value="Asia/Tokyo" data-lang-text="ru:Токио (UTC+9)|en:Tokyo (UTC+9)"></option>
+                                </select>
+                                <span id="currentTime" class="password-hint"></span>
+                            </div>
+                            <div class="form-group">
+                                <label data-lang-text="ru:Формат даты и времени|en:Date and Time Format"></label>
+                                <div class="toggle-switch-group">
+                                    <label class="toggle-switch">
+                                        <input type="radio" name="timeFormat" value="24h" checked>
+                                        <span class="slider round"></span>
+                                    </label>
+                                    <span class="toggle-label" data-lang-text="ru:24ч|en:24h"></span>
+                                    <label class="toggle-switch">
+                                        <input type="radio" name="timeFormat" value="12h">
+                                        <span class="slider round"></span>
+                                    </label>
+                                    <span class="toggle-label" data-lang-text="ru:12ч|en:12h"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label data-lang-text="ru:Язык интерфейса|en:Interface Language"></label>
+                                <select id="interfaceLanguage">
+                                    <option value="ru" data-lang-text="ru:Русский|en:Russian"></option>
+                                    <option value="en" data-lang-text="ru:English|en:English"></option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label data-lang-text="ru:Тема оформления|en:Theme"></label>
+                                <div class="toggle-switch-group">
+                                    <label class="toggle-switch">
+                                        <input type="radio" name="theme" value="light" checked>
+                                        <span class="slider round"></span>
+                                    </label>
+                                    <span class="toggle-label" data-lang-text="ru:Светлая|en:Light"></span>
+                                    <label class="toggle-switch">
+                                        <input type="radio" name="theme" value="dark">
+                                        <span class="slider round"></span>
+                                    </label>
+                                    <span class="toggle-label" data-lang-text="ru:Тёмная|en:Dark"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="profile-history-section" class="profile-section">
+                            <h2><span data-lang-text="ru:История авторизаций|en:Authorization History"></span></h2>
+                            <div class="form-actions" style="justify-content: flex-end;">
+                                <button id="clearHistoryBtn" class="btn btn-secondary" data-lang-text="ru:Очистить историю|en:Clear History"></button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="history-table">
+                                    <thead>
+                                        <tr>
+                                            <th><span data-lang-text="ru:Дата и время|en:Date & Time"></span></th>
+                                            <th><span data-lang-text="ru:IP-адрес|en:IP Address"></span></th>
+                                            <th><span data-lang-text="ru:Город/регион|en:City/Region"></span></th>
+                                            <th><span data-lang-text="ru:Статус|en:Status"></span></th>
+                                            <th><span data-lang-text="ru:Причина|en:Reason"></span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="loginHistoryTableBody">
+                                        <!-- Данные будут генерироваться JavaScript'ом -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- Кнопки Сохранить/Отменить теперь внутри .profile-content -->
+                        <div class="profile-actions form-actions">
+                            <button id="saveProfileBtn" class="btn btn-primary" data-lang-text="ru:Сохранить|en:Save" disabled></button>
+                            <button id="cancelProfileBtn" class="btn btn-secondary" data-lang-text="ru:Отменить|en:Cancel"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const menuItems = document.querySelectorAll('.main-menu-item');
+            const pageAreas = document.querySelectorAll('.page-area');
+            const widgetArea = document.querySelector('.widget-area');
+            const profilePage = document.getElementById('profile-page');
+            const profileSettingsBtn = document.getElementById('profile-settings-btn');
+            
+            function showPage(pageToShow) {
+                pageAreas.forEach(page => page.classList.remove('active'));
+                pageToShow.classList.add('active');
+
+                if (pageToShow === widgetArea) {
+                    const activeMenuItem = document.querySelector('.main-menu-item.active');
+                    const targetId = activeMenuItem ? activeMenuItem.dataset.target : 'dashboards-widgets';
+                    document.querySelectorAll('.widget-group').forEach(group => {
+                        group.classList.toggle('active', group.id === targetId);
+                    });
+                } else if (pageToShow === profilePage) {
+                    menuItems.forEach(item => item.classList.remove('active'));
+                    const firstProfileMenuItem = document.querySelector('.profile-menu-item');
+                    const firstProfileSection = document.querySelector('.profile-section');
+                    if (firstProfileMenuItem && firstProfileSection) {
+                        firstProfileMenuItem.classList.add('active');
+                        firstProfileSection.classList.add('active');
+                    }
+                }
+            }
+
+            menuItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const targetId = this.dataset.target;
+                    
+                    menuItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    document.querySelectorAll('.widget-group').forEach(group => {
+                        group.classList.toggle('active', group.id === targetId);
+                    });
+
+                    showPage(widgetArea);
+                });
+            });
+
+            profileSettingsBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.popup-menu.visible').forEach(p => p.classList.remove('visible'));
+                showPage(profilePage);
+            });
+
+            const profileMenuItems = document.querySelectorAll('.profile-menu-item');
+            const profileSections = document.querySelectorAll('.profile-section');
+
+            profileMenuItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    profileMenuItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    profileSections.forEach(section => section.classList.remove('active'));
+                    const targetSection = document.getElementById(this.dataset.target);
+                    if (targetSection) {
+                        targetSection.classList.add('active');
+                    }
+                });
+            });
+
+            function setupPopup(triggerId, popupId) {
+                const trigger = document.getElementById(triggerId);
+                const popup = document.getElementById(popupId);
+                trigger.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    document.querySelectorAll('.popup-menu.visible').forEach(p => {
+                        if (p.id !== popupId) p.classList.remove('visible');
+                    });
+                    popup.classList.toggle('visible');
+                });
+            }
+            setupPopup('bell-icon', 'notification-popup');
+            setupPopup('user-avatar', 'profile-dropdown');
+
+            document.addEventListener('click', (event) => {
+                if (!event.target.closest('.popup-menu, .icon-btn, .user-profile')) {
+                    document.querySelectorAll('.popup-menu.visible').forEach(p => p.classList.remove('visible'));
+                }
+            });
+
+            const themeSwitch = document.querySelector('.theme-switch');
+            themeSwitch.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+                themeSwitch.classList.toggle('active');
+            });
+            
+            const searchInput = document.getElementById('page-search');
+            searchInput.addEventListener('input', () => {
+                const searchTerm = searchInput.value.toLowerCase().trim();
+                const activeGroup = document.querySelector('.widget-group.active');
+                if (!activeGroup) return;
+
+                activeGroup.querySelectorAll('.widget').forEach(widget => {
+                    const textElement = widget.querySelector('p');
+                    const widgetText = textElement.textContent.toLowerCase();
+                    widget.style.display = widgetText.includes(searchTerm) ? 'flex' : 'none';
+                });
+            });
+
+            const translations = {};
+            document.querySelectorAll('[data-lang-text], [data-lang-placeholder]').forEach(el => {
+                const key = el.dataset.langText || el.dataset.langPlaceholder;
+                const parts = key.split('|');
+                translations[key] = { ru: parts[0].substring(3), en: parts[1].substring(3) };
+            });
+
+            function updateLanguage(lang) {
+                document.body.setAttribute('data-lang', lang);
+                document.querySelectorAll('[data-lang-text]').forEach(el => {
+                    const key = el.dataset.langText;
+                    const target = el.querySelector('span') || el;
+                    if(target && translations[key]) {
+                         if (el.tagName === 'LABEL') {
+                            el.innerHTML = translations[key][lang];
+                        } else {
+                            target.innerHTML = translations[key][lang];
+                        }
+                    }
+                });
+                document.querySelectorAll('[data-lang-placeholder]').forEach(el => {
+                    el.setAttribute('placeholder', translations[el.dataset.langPlaceholder][lang]);
+                });
+            }
+            
+            updateLanguage(document.body.getAttribute('data-lang'));
+
+            document.getElementById('lang-switcher').addEventListener('click', () => {
+                const newLang = document.body.getAttribute('data-lang') === 'ru' ? 'en' : 'ru';
+                updateLanguage(newLang);
+            });
+
+            const changePasswordBtn = document.getElementById('changePasswordBtn');
+            const passwordChangeForm = document.getElementById('passwordChangeForm');
+            const newPasswordInput = document.getElementById('newPassword');
+            const passwordStrengthIndicator = document.querySelector('.password-strength-indicator');
+            const cancelPasswordChangeBtn = passwordChangeForm.querySelector('.btn-secondary');
+
+            changePasswordBtn.addEventListener('click', () => {
+                passwordChangeForm.classList.toggle('hidden');
+            });
+            cancelPasswordChangeBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                passwordChangeForm.classList.add('hidden');
+            });
+
+            function checkPasswordStrength(password) {
+                let strength = 0;
+                if (password.length >= 8) strength++;
+                if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+                if (/\d/.test(password)) strength++;
+                if (/[^A-Za-z0-9]/.test(password)) strength++;
+                return strength;
+            }
+
+            newPasswordInput.addEventListener('input', () => {
+                const password = newPasswordInput.value;
+                const strength = checkPasswordStrength(password);
+                const bars = passwordStrengthIndicator.querySelectorAll('.strength-bar');
+
+                bars.forEach(bar => {
+                    bar.style.backgroundColor = 'var(--light-border)'; // Reset color
+                    bar.classList.remove('weak', 'medium', 'strong');
+                });
+
+                if (password.length > 0) {
+                    for (let i = 0; i < strength; i++) {
+                        if (strength <= 1) bars[i].classList.add('weak');
+                        else if (strength <= 3) bars[i].classList.add('medium');
+                        else bars[i].classList.add('strong');
+                    }
+                }
+            });
+
+            // --- ЛОГИКА НАСТРОЕК ИНТЕРФЕЙСА ---
+            const interfaceLanguageSelect = document.getElementById('interfaceLanguage');
+            const themeRadios = document.querySelectorAll('input[name="theme"]');
+            const timeFormatRadios = document.querySelectorAll('input[name="timeFormat"]');
+            const timeZoneSelect = document.getElementById('timeZone');
+            const currentTimeSpan = document.getElementById('currentTime');
+
+            // Синхронизация языка
+            interfaceLanguageSelect.value = document.body.dataset.lang;
+            interfaceLanguageSelect.addEventListener('change', (e) => {
+                updateLanguage(e.target.value);
+            });
+
+            // Синхронизация темы
+            const currentTheme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
+            document.querySelector(`input[name="theme"][value="${currentTheme}"]`).checked = true;
+
+            themeRadios.forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    if (e.target.value === 'dark') {
+                        document.body.classList.add('dark-mode');
+                        // Глобальный переключатель темы тоже нужно обновить
+                        document.querySelector('.theme-switch').classList.add('active');
+                    } else {
+                        document.body.classList.remove('dark-mode');
+                        document.querySelector('.theme-switch').classList.remove('active');
+                    }
+                });
+            });
+
+            function updateCurrentTime() {
+                const tz = timeZoneSelect.value;
+                const options = {
+                    hour: '2-digit', minute: '2-digit', second: '2-digit',
+                    timeZone: tz
+                };
+                // Проверяем выбранный формат времени
+                const selectedTimeFormat = document.querySelector('input[name="timeFormat"]:checked');
+                if (selectedTimeFormat && selectedTimeFormat.value === '12h') {
+                    options.hour12 = true;
+                } else {
+                    options.hour12 = false;
+                }
+                const now = new Date();
+                currentTimeSpan.textContent = ` ${now.toLocaleTimeString(document.body.dataset.lang, options)}`;
+            }
+
+            timeZoneSelect.addEventListener('change', updateCurrentTime);
+            timeFormatRadios.forEach(radio => radio.addEventListener('change', updateCurrentTime));
+            updateCurrentTime(); // Инициализация времени при загрузке
+
+            // --- ЛОГИКА ИСТОРИИ АВТОРИЗАЦИЙ ---
+            const loginHistoryTableBody = document.getElementById('loginHistoryTableBody');
+            const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+            const isAdmin = true; // Имитация роли администратора
+
+            if (!isAdmin) {
+                clearHistoryBtn.classList.add('hidden'); // Скрываем кнопку для не-админов
+            }
+
+            function generateLoginHistoryData(count = 10) {
+                const data = [];
+                const statuses = ['Успешно', 'Неудача'];
+                const reasons = ['Неверный пароль', 'Блокировка аккаунта', 'Неизвестная ошибка', ''];
+                const cities = ['Москва', 'Санкт-Петербург', 'Нью-Йорк', 'Токио', 'Лондон'];
+
+                for (let i = 0; i < count; i++) {
+                    const status = statuses[Math.floor(Math.random() * statuses.length)];
+                    const reason = (status === 'Неудача') ? reasons[Math.floor(Math.random() * (reasons.length - 1))] : ''; // Последняя причина пустая
+                    const date = new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000); // За последний месяц
+                    data.push({
+                        dateTime: date.toLocaleString(),
+                        ipAddress: `192.168.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`,
+                        cityRegion: cities[Math.floor(Math.random() * cities.length)],
+                        status: status,
+                        reason: reason
+                    });
+                }
+                return data.sort((a, b) => new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime());
+            }
+
+            let loginHistory = generateLoginHistoryData();
+
+            function renderLoginHistoryTable() {
+                loginHistoryTableBody.innerHTML = ''; // Очищаем таблицу перед рендерингом
+                loginHistory.forEach(entry => {
+                    const row = loginHistoryTableBody.insertRow();
+                    if (entry.status === 'Неудача') {
+                        row.classList.add('failed-login');
+                    }
+                    row.insertCell().textContent = entry.dateTime;
+                    row.insertCell().textContent = entry.ipAddress;
+                    row.insertCell().textContent = entry.cityRegion;
+                    row.insertCell().textContent = entry.status;
+                    row.insertCell().textContent = entry.reason;
+                });
+            }
+
+            renderLoginHistoryTable(); // Инициализация таблицы при загрузке
+
+            clearHistoryBtn.addEventListener('click', () => {
+                if (confirm('Вы уверены, что хотите очистить историю авторизаций?')) {
+                    loginHistory = [];
+                    renderLoginHistoryTable();
+                    alert('История очищена (фиктивно).');
+                }
+            });
+
+            // --- ОБЩАЯ ЛОГИКА ДЕЙСТВИЙ ПРОФИЛЯ (СОХРАНИТЬ/ОТМЕНИТЬ) ---
+            const profileForm = document.querySelector('#profile-main-data-section'); // Область для отслеживания изменений
+            const interfaceForm = document.querySelector('#profile-interface-section');
+            const saveProfileBtn = document.getElementById('saveProfileBtn');
+            const cancelProfileBtn = document.getElementById('cancelProfileBtn');
+            const logoutBtn = document.querySelector('#profile-dropdown a:last-child'); // Кнопка "Выход"
+
+            let initialFormState = {}; // Для хранения начального состояния формы
+
+            function saveInitialFormState() {
+                initialFormState = {
+                    // Основные данные
+                    fullName: document.getElementById('fullName').value,
+                    email: document.getElementById('email').value,
+                    // Настройки интерфейса
+                    homeDashboard: document.getElementById('homeDashboard').value,
+                    widgetLimit: document.getElementById('widgetLimit').value,
+                    timeZone: document.getElementById('timeZone').value,
+                    timeFormat: document.querySelector('input[name="timeFormat"]:checked').value,
+                    interfaceLanguage: document.getElementById('interfaceLanguage').value,
+                    theme: document.querySelector('input[name="theme"][value="dark"]').checked ? 'dark' : 'light',
+                };
+            }
+
+            function hasFormChanged() {
+                // Проверяем Основные данные
+                if (initialFormState.fullName !== document.getElementById('fullName').value ||
+                    initialFormState.email !== document.getElementById('email').value) {
+                    return true;
+                }
+                // Проверяем Настройки интерфейса
+                if (initialFormState.homeDashboard !== document.getElementById('homeDashboard').value ||
+                    initialFormState.widgetLimit !== document.getElementById('widgetLimit').value ||
+                    initialFormState.timeZone !== document.getElementById('timeZone').value ||
+                    initialFormState.timeFormat !== document.querySelector('input[name="timeFormat"]:checked').value ||
+                    initialFormState.interfaceLanguage !== document.getElementById('interfaceLanguage').value ||
+                    initialFormState.theme !== (document.querySelector('input[name="theme"][value="dark"]').checked ? 'dark' : 'light')) {
+                    return true;
+                }
+                return false;
+            }
+
+            function toggleSaveButton() {
+                saveProfileBtn.disabled = !hasFormChanged();
+                saveProfileBtn.classList.toggle('btn-disabled', !hasFormChanged());
+            }
+
+            // Отслеживание изменений в обеих формах
+            profileForm.addEventListener('input', toggleSaveButton);
+            profileForm.addEventListener('change', toggleSaveButton);
+
+            interfaceForm.addEventListener('input', toggleSaveButton);
+            interfaceForm.addEventListener('change', toggleSaveButton);
+            
+
+            saveProfileBtn.addEventListener('click', () => {
+                // Валидация E-mail
+                const emailInput = document.getElementById('email');
+                if (!emailInput.value.match(/^[^@]+@[^@]+\.[^@]+$/)) {
+                    alert('Пожалуйста, введите корректный E-mail.');
+                    emailInput.focus();
+                    return;
+                }
+                
+                // Имитация сохранения
+                alert('Настройки профиля сохранены!');
+                saveInitialFormState(); // Обновляем начальное состояние
+                toggleSaveButton(); // Деактивируем кнопку сохранения
+            });
+
+            cancelProfileBtn.addEventListener('click', () => {
+                // Возвращаем исходные значения
+                document.getElementById('fullName').value = initialFormState.fullName;
+                document.getElementById('email').value = initialFormState.email;
+                document.getElementById('homeDashboard').value = initialFormState.homeDashboard;
+                document.getElementById('widgetLimit').value = initialFormState.widgetLimit;
+                document.getElementById('timeZone').value = initialFormState.timeZone;
+                document.querySelector(`input[name="timeFormat"][value="${initialFormState.timeFormat}"]`).checked = true;
+                document.getElementById('interfaceLanguage').value = initialFormState.interfaceLanguage;
+                
+                const currentThemeRadio = document.querySelector(`input[name="theme"][value="${initialFormState.theme}"]`);
+                if (currentThemeRadio) currentThemeRadio.checked = true;
+
+
+                // Пересинхронизация глобальной темы и языка
+                updateLanguage(initialFormState.interfaceLanguage);
+                if (initialFormState.theme === 'dark') {
+                    document.body.classList.add('dark-mode');
+                    document.querySelector('.theme-switch').classList.add('active');
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    document.querySelector('.theme-switch').classList.remove('active');
+                }
+                updateCurrentTime(); // Обновляем отображение времени
+
+                toggleSaveButton(); // Деактивируем кнопку сохранения
+                alert('Изменения отменены.');
+            });
+
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                alert('Вы вышли из системы.');
+                // В реальном приложении здесь был бы редирект на страницу входа
+            });
+
+            saveInitialFormState(); // Сохраняем начальное состояние при загрузке страницы
+            toggleSaveButton(); // Инициализируем состояние кнопки сохранения
+
+        });
+    </script>
+</body>
+</html>

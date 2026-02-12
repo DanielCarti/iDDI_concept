@@ -67,6 +67,7 @@ body.dark-mode .top-bar { background-color: var(--dark-surface); border-color: v
     height: 55px;
     width: auto;
     object-fit: contain;
+    border: 1px solid var(--light-border); /* Добавляем рамку для лучшей видимости */
 }
 
 .controls { display: flex; align-items: center; gap: 20px; }

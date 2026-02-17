@@ -7,19 +7,19 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://code.iconify.design/iconify-icon/1.0.2/iconify-icon.min.js"></script>
 </head>
-<body data-lang="ru">
+<body data-lang="ru" class="dark-mode">
     <div class="container">
         <!-- Верхний бар -->
         <div class="top-bar">
             <div class="logo">
-                <img src="logo_inline.png" alt="Inline Telecom Solutions Logo">
+                <a href="index.html"><img src="logo_inline.png" alt="Inline Telecom Solutions Logo"></a>
             </div>
             <div class="controls">
                 <div class="search-bar">
                     <iconify-icon icon="eva:search-outline"></iconify-icon>
                     <input type="text" id="page-search" data-lang-placeholder="ru:Фильтр виджетов...|en:Filter widgets...">
                 </div>
-                <div class="theme-switch">
+                <div class="theme-switch active">
                     <div class="knob"></div>
                 </div>
                 <div class="icon-btn" id="bell-icon">
@@ -29,7 +29,7 @@
                     </div>
                 </div>
                 <div class="icon-btn" id="lang-switcher">
-                    <iconify-icon icon="clarity:world-line"></iconify-icon>
+                    <iconify-icon icon="emojione:flag-for-russia" id="lang-icon"></iconify-icon>
                 </div>
                 <div class="user-profile" id="user-avatar">
                      <div id="profile-dropdown" class="popup-menu profile-dropdown">
@@ -38,6 +38,12 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- Контекстная навигация: хлебные крошки и навигация по плиткам -->
+        <div class="context-nav" style="display: none;">
+            <div id="breadcrumbs"></div>
+            <div id="tile-navigation" class="tile-nav"></div>
         </div>
 
         <!-- Основной контент -->
@@ -81,7 +87,7 @@
                     <!-- Группа виджетов для Dashboards -->
                     <div class="widget-group active" id="dashboards-widgets">
                         <div class="widget"><iconify-icon icon="mdi:format-list-checks"></iconify-icon><p data-lang-text="ru:Задачи|en:Tasks"></p></div>
-                        <div class="widget"><iconify-icon icon="ic:outline-monitor"></iconify-icon><p data-lang-text="ru:Монитор|en:Monitor"></p></div>
+                        <div class="widget"><iconify-icon icon="ic:outline-monitor"></iconify-icon><p data-lang-text="ru:Мониторинг|en:Monitoring"></p></div>
                         <div class="widget"><iconify-icon icon="clarity:settings-line"></iconify-icon><p data-lang-text="ru:Настройки виджетов|en:Widget settings"></p></div>
                     </div>
                     <!-- Группа виджетов для iDNS -->
@@ -93,8 +99,11 @@
                         <div class="widget"><iconify-icon icon="mdi:database-search-outline"></iconify-icon><p data-lang-text="ru:Журнал запросов|en:Query Log"></p></div>
                         <div class="widget"><iconify-icon icon="tabler:template"></iconify-icon><p data-lang-text="ru:Шаблоны зоны|en:Zone Templates"></p></div>
                         <div class="widget"><iconify-icon icon="mdi:swap-horizontal-bold"></iconify-icon><p data-lang-text="ru:Переадресации|en:Forwarding"></p></div>
-                        <div class="widget"><iconify-icon icon="carbon:subnet-acl-rules"></iconify-icon><p data-lang-text="ru:Именованые ACL|en:Named ACLs"></p></div>
+                        <div class="widget"><iconify-icon icon="carbon:subnet-acl-rules"></iconify-icon><p data-lang-text="ru:ACL|en:ACL"></p></div>
                         <div class="widget"><iconify-icon icon="akar-icons:statistic-up"></iconify-icon><p data-lang-text="ru:Статистика DNS|en:DNS Statistics"></p></div>
+                        <div class="widget"><iconify-icon icon="carbon:document-blank"></iconify-icon><p data-lang-text="ru:Базовые конфигурации|en:Baselines"></p></div>
+                        <div class="widget"><iconify-icon icon="akar-icons:statistic-up"></iconify-icon><p data-lang-text="ru:Метрики|en:Metrics"></p></div>
+                        <div class="widget"><iconify-icon icon="carbon:network-enterprise"></iconify-icon><p data-lang-text="ru:Управление узлами|en:Node Management"></p></div>
                     </div>
                     <!-- Группа виджетов для iDHCP -->
                     <div class="widget-group" id="idhcp-widgets">
@@ -140,6 +149,11 @@
                         <div class="widget"><iconify-icon icon="mdi:file-document-outline"></iconify-icon><p data-lang-text="ru:Syslog|en:Syslog"></p></div>
                         <div class="widget"><iconify-icon icon="mdi:shield-lock-outline"></iconify-icon><p data-lang-text="ru:События безопасности|en:Security Events"></p></div>
                     </div>
+                </div>
+
+                 <!-- Область для детального просмотра виджета -->
+                <div id="widget-detail-area" class="page-area">
+                    <!-- Сюда будет загружаться контент виджета -->
                 </div>
 
                 <!-- Страница настроек профиля -->
@@ -334,6 +348,7 @@
                     });
 
                     showPage(widgetArea);
+                    contextNav.style.display = 'none'; // Скрываем хлебные крошки
                 });
             });
 
@@ -407,6 +422,12 @@
             });
 
             function updateLanguage(lang) {
+                const langIcon = document.getElementById('lang-icon');
+                if (lang === 'ru') {
+                    langIcon.setAttribute('icon', 'emojione:flag-for-russia');
+                } else {
+                    langIcon.setAttribute('icon', 'emojione:flag-for-united-kingdom');
+                }
                 document.body.setAttribute('data-lang', lang);
                 document.querySelectorAll('[data-lang-text]').forEach(el => {
                     const key = el.dataset.langText;
@@ -689,6 +710,123 @@
             saveInitialFormState(); // Сохраняем начальное состояние при загрузке страницы
             toggleSaveButton(); // Инициализируем состояние кнопки сохранения
 
+
+            // --- ЛОГИКА ХЛЕБНЫХ КРОШЕК И НАВИГАЦИИ ПО ПЛИТКАМ ---
+            const widgets = document.querySelectorAll('.widget');
+            const contextNav = document.querySelector('.context-nav');
+            const breadcrumbs = document.getElementById('breadcrumbs');
+            const tileNavigation = document.getElementById('tile-navigation');
+            const widgetDetailArea = document.getElementById('widget-detail-area');
+
+            function resetToWidgetView() {
+                contextNav.style.display = 'none';
+                showPage(widgetArea);
+            }
+
+            function showWidgetDetail(widgetElement) {
+                const clickedWidgetText = widgetElement.querySelector('p').textContent;
+                const widgetGroup = widgetElement.closest('.widget-group');
+                const widgetGroupId = widgetGroup.id;
+                const sectionMenuItem = document.querySelector(`.main-menu-item[data-target="${widgetGroupId}"]`);
+                const sectionName = sectionMenuItem.querySelector('.title').textContent;
+
+                // 1. Показать и обновить хлебные крошки
+                breadcrumbs.innerHTML = `<a href="#" id="home-breadcrumb">Главная</a> <span>/</span> <a href="#" class="breadcrumb-section" data-target="${widgetGroupId}">${sectionName}</a> <span>/</span> ${clickedWidgetText}`;
+                contextNav.style.display = 'flex';
+
+                // 2. Создать навигацию по плиткам
+                tileNavigation.innerHTML = '';
+                const siblingWidgets = widgetGroup.querySelectorAll('.widget');
+                siblingWidgets.forEach(sibling => {
+                    const siblingText = sibling.querySelector('p').textContent;
+                    const navItem = document.createElement('div');
+                    navItem.classList.add('tile-nav-item');
+                    if (siblingText === clickedWidgetText) {
+                        navItem.classList.add('active');
+                    }
+                    navItem.textContent = siblingText;
+                    tileNavigation.appendChild(navItem);
+                });
+
+                // 3. Показать детальный вид
+                pageAreas.forEach(page => page.classList.remove('active'));
+                widgetDetailArea.classList.add('active');
+
+                if (clickedWidgetText === 'Мониторинг' || clickedWidgetText === 'Monitoring') {
+                    widgetDetailArea.innerHTML = `
+                        <h2>${clickedWidgetText}</h2>
+                        <div class="monitoring-dashboard">
+                            <div class="monitor-widget">
+                                <h3>CPU Load</h3>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 65%;"></div>
+                                </div>
+                                <p>65%</p>
+                            </div>
+                            <div class="monitor-widget">
+                                <h3>Memory Usage</h3>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 40%;"></div>
+                                </div>
+                                <p>40% (8GB / 20GB)</p>
+                            </div>
+                            <div class="monitor-widget">
+                                <h3>Network Traffic</h3>
+                                <div class="network-stats">
+                                    <p><strong>In:</strong> 15.2 MB/s</p>
+                                    <p><strong>Out:</strong> 2.8 MB/s</p>
+                                </div>
+                            </div>
+                            <div class="monitor-widget">
+                                <h3>Disk I/O</h3>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 15%;"></div>
+                                </div>
+                                <p>15%</p>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    widgetDetailArea.innerHTML = `<h2>${clickedWidgetText}</h2><p>Здесь будет подробное содержимое для виджета "${clickedWidgetText}".</p>`;
+                }
+
+
+                // 4. Добавить обработчик для возврата на главную
+                document.getElementById('home-breadcrumb').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    resetToWidgetView();
+                });
+            }
+
+            widgets.forEach(widget => {
+                widget.addEventListener('click', () => {
+                    showWidgetDetail(widget);
+                });
+            });
+
+            tileNavigation.addEventListener('click', (e) => {
+                if (e.target.classList.contains('tile-nav-item')) {
+                    const widgetText = e.target.textContent;
+                    // Находим соответствующий виджет и "кликаем" по нему
+                    const activeWidgetGroup = document.querySelector('.widget-group.active');
+                    const targetWidget = Array.from(activeWidgetGroup.querySelectorAll('.widget')).find(w => w.querySelector('p').textContent === widgetText);
+                    if(targetWidget) {
+                        showWidgetDetail(targetWidget);
+                    }
+                }
+            });
+
+            breadcrumbs.addEventListener('click', (e) => {
+                if (e.target.classList.contains('breadcrumb-section')) {
+                    e.preventDefault();
+                    const targetId = e.target.dataset.target;
+                    const targetMenuItem = document.querySelector(`.main-menu-item[data-target="${targetId}"]`);
+                    if(targetMenuItem) {
+                        targetMenuItem.click();
+                        resetToWidgetView();
+                    }
+                }
+            });
         });
     </script>
 </body>

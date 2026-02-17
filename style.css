@@ -366,10 +366,12 @@ body.dark-mode .profile-menu-item.active {
     flex-grow: 1;
     background-color: var(--light-surface);
     border-radius: 12px;
-    padding: 30px 30px 100px 30px; /* Увеличиваем нижний отступ */
+    padding: 30px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     min-width: 0; /* Позволяет контейнеру сжиматься */
     overflow-y: auto; /* Добавляем прокрутку для этого блока */
+    display: flex;
+    flex-direction: column;
 }
 body.dark-mode .profile-content {
     background-color: var(--dark-surface);
@@ -380,6 +382,7 @@ body.dark-mode .profile-content {
     color: var(--light-text-primary);
     margin-top: 0;
     margin-bottom: 30px;
+    flex-shrink: 0;
 }
 body.dark-mode .profile-content h2 {
     color: var(--dark-text-primary);
@@ -735,24 +738,18 @@ body.dark-mode .history-table .failed-login {
 
 /* --- Стили для футера страницы профиля --- */
 .profile-actions {
-    padding: 15px 30px;
+    padding-top: 20px;
+    margin-top: auto; /* Прижимает футер к низу flex-контейнера */
     background-color: var(--light-surface);
     border-top: 1px solid var(--light-border);
-    position: sticky; /* Фиксирует внизу прокручиваемого контейнера */
-    bottom: 0;
-    left: 0;
-    right: 0;
     display: flex;
     justify-content: flex-end;
     gap: 10px;
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
-    z-index: 10;
     box-sizing: border-box;
 }
 body.dark-mode .profile-actions {
     background-color: var(--dark-surface);
     border-top-color: var(--dark-border);
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
 }
 
 .form-actions .btn {
@@ -769,4 +766,146 @@ body.dark-mode .profile-actions .btn-primary:hover {
     opacity: 0.6;
     cursor: not-allowed;
     pointer-events: none; /* Отключаем события мыши */
+}
+
+/* --- Контекстная навигация --- */
+.context-nav {
+    background-color: var(--light-surface);
+    padding: 0 40px;
+    border-bottom: 1px solid var(--light-border);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+body.dark-mode .context-nav {
+    background-color: var(--dark-surface);
+    border-color: var(--dark-border);
+}
+
+#breadcrumbs {
+    font-size: 14px;
+    color: var(--light-text-secondary);
+}
+body.dark-mode #breadcrumbs {
+    color: var(--dark-text-secondary);
+}
+#breadcrumbs a {
+    color: var(--light-accent);
+    text-decoration: none;
+}
+#breadcrumbs a:hover {
+    text-decoration: underline;
+}
+body.dark-mode #breadcrumbs a {
+    color: var(--dark-accent);
+}
+
+#breadcrumbs span {
+    margin: 0 5px;
+}
+
+.tile-nav {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.tile-nav-item {
+    padding: 8px 15px;
+    border-radius: 20px;
+    background-color: var(--light-bg);
+    color: var(--light-text-primary);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+.tile-nav-item:hover {
+    background-color: var(--light-hover-bg);
+}
+.tile-nav-item.active {
+    background-color: var(--light-accent);
+    color: #fff;
+}
+body.dark-mode .tile-nav-item {
+    background-color: var(--dark-bg);
+    color: var(--dark-text-primary);
+}
+body.dark-mode .tile-nav-item:hover {
+    background-color: var(--dark-hover-bg);
+}
+body.dark-mode .tile-nav-item.active {
+    background-color: var(--dark-accent);
+    color: var(--dark-text-primary);
+}
+.hidden {
+    display: none !important;
+}
+
+#widget-detail-area {
+    padding: 40px;
+}
+
+body.dark-mode #widget-detail-area h2,
+body.dark-mode #widget-detail-area p {
+    color: var(--dark-text-primary);
+}
+
+.monitoring-dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.monitor-widget {
+    background-color: var(--light-surface);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+body.dark-mode .monitor-widget {
+    background-color: var(--dark-surface);
+}
+
+.monitor-widget h3 {
+    margin-top: 0;
+    font-size: 18px;
+    color: var(--light-text-primary);
+}
+body.dark-mode .monitor-widget h3 {
+    color: var(--dark-text-primary);
+}
+
+.progress-bar {
+    background-color: var(--light-bg);
+    border-radius: 5px;
+    height: 10px;
+    overflow: hidden;
+}
+body.dark-mode .progress-bar {
+    background-color: var(--dark-bg);
+}
+
+.progress-bar .progress {
+    background-color: var(--light-accent);
+    height: 100%;
+}
+body.dark-mode .progress-bar .progress {
+    background-color: var(--dark-accent);
+}
+
+.monitor-widget p {
+    margin-top: 10px;
+    font-size: 16px;
+    color: var(--light-text-secondary);
+}
+body.dark-mode .monitor-widget p {
+    color: var(--dark-text-secondary);
+}
+
+.network-stats p {
+    margin: 5px 0;
 }

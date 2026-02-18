@@ -307,66 +307,282 @@
             </div>
         </div>
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const menuItems = document.querySelectorAll('.main-menu-item');
-            const pageAreas = document.querySelectorAll('.page-area');
-            const widgetArea = document.querySelector('.widget-area');
-            const profilePage = document.getElementById('profile-page');
-            const profileSettingsBtn = document.getElementById('profile-settings-btn');
-            
-            function showPage(pageToShow) {
-                pageAreas.forEach(page => page.classList.remove('active'));
-                pageToShow.classList.add('active');
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // --- Elements ---
+        const menuItems = document.querySelectorAll('.main-menu-item');
+        const pageAreas = document.querySelectorAll('.page-area');
+        const widgetArea = document.querySelector('.widget-area');
+        const profilePage = document.getElementById('profile-page');
+        const profileSettingsBtn = document.getElementById('profile-settings-btn');
+        const themeSwitch = document.querySelector('.theme-switch');
+        const contextNav = document.querySelector('.context-nav');
+        const breadcrumbs = document.getElementById('breadcrumbs');
+        const tileNavigation = document.getElementById('tile-navigation');
+        const widgetDetailArea = document.getElementById('widget-detail-area');
+        const widgets = document.querySelectorAll('.widget');
+        const langSwitcher = document.getElementById('lang-switcher');
+        const langIcon = document.getElementById('lang-icon');
+        
+        // Profile Page Elements
+        const interfaceLanguageSelect = document.getElementById('interfaceLanguage');
+        const themeRadios = document.querySelectorAll('input[name="theme"]');
+        const profileForm = document.querySelector('#profile-main-data-section');
+        const interfaceForm = document.querySelector('#profile-interface-section');
+        const saveProfileBtn = document.getElementById('saveProfileBtn');
+        const cancelProfileBtn = document.getElementById('cancelProfileBtn');
 
-                if (pageToShow === widgetArea) {
-                    const activeMenuItem = document.querySelector('.main-menu-item.active');
-                    const targetId = activeMenuItem ? activeMenuItem.dataset.target : 'dashboards-widgets';
-                    document.querySelectorAll('.widget-group').forEach(group => {
-                        group.classList.toggle('active', group.id === targetId);
-                    });
-                } else if (pageToShow === profilePage) {
-                    menuItems.forEach(item => item.classList.remove('active'));
-                    const firstProfileMenuItem = document.querySelector('.profile-menu-item');
-                    const firstProfileSection = document.querySelector('.profile-section');
-                    if (firstProfileMenuItem && firstProfileSection) {
-                        firstProfileMenuItem.classList.add('active');
-                        firstProfileSection.classList.add('active');
+        // --- State ---
+        let monitoringIntervalId = null;
+        let initialFormState = {};
+
+        // --- Translations ---
+        const translations = {};
+        document.querySelectorAll('[data-lang-text], [data-lang-placeholder]').forEach(el => {
+            const key = el.dataset.langText || el.dataset.langPlaceholder;
+            const parts = key.split('|');
+            translations[key] = { ru: parts[0].substring(3), en: parts[1].substring(3) };
+        });
+
+        // --- Functions ---
+        function updateLanguage(lang) {
+            if (!lang) return;
+            langIcon.setAttribute('icon', lang === 'ru' ? 'emojione:flag-for-russia' : 'emojione:flag-for-united-kingdom');
+            document.body.setAttribute('data-lang', lang);
+            document.querySelectorAll('[data-lang-text]').forEach(el => {
+                const key = el.dataset.langText;
+                const target = el.querySelector('span') || el;
+                if(target && translations[key] && translations[key][lang] !== undefined) {
+                     if (el.tagName === 'LABEL' || !target.matches('span')) {
+                        el.innerHTML = translations[key][lang];
+                    } else {
+                        target.innerHTML = translations[key][lang];
                     }
                 }
+            });
+            document.querySelectorAll('[data-lang-placeholder]').forEach(el => {
+                 if (el.dataset.langPlaceholder && translations[el.dataset.langPlaceholder] && translations[el.dataset.langPlaceholder][lang] !== undefined) {
+                    el.setAttribute('placeholder', translations[el.dataset.langPlaceholder][lang]);
+                }
+            });
+            if(interfaceLanguageSelect) {
+                interfaceLanguageSelect.value = lang;
             }
+        }
 
-            menuItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    const targetId = this.dataset.target;
-                    
-                    menuItems.forEach(i => i.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    document.querySelectorAll('.widget-group').forEach(group => {
-                        group.classList.toggle('active', group.id === targetId);
-                    });
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                document.body.classList.add('dark-mode');
+                themeSwitch.classList.add('active');
+            } else {
+                document.body.classList.remove('dark-mode');
+                themeSwitch.classList.remove('active');
+            }
+            const themeRadio = document.querySelector(`input[name="theme"][value="${theme}"]`);
+            if (themeRadio) {
+                themeRadio.checked = true;
+            }
+        }
 
-                    showPage(widgetArea);
-                    contextNav.style.display = 'none'; // Скрываем хлебные крошки
+        function stopMonitoring() {
+            if (monitoringIntervalId) {
+                clearInterval(monitoringIntervalId);
+                monitoringIntervalId = null;
+            }
+        }
+
+        function startMonitoringUpdates() {
+            stopMonitoring();
+            
+            monitoringIntervalId = setInterval(() => {
+                const cpuProgress = document.querySelector('.monitor-widget.cpu .progress');
+                const cpuText = document.querySelector('.monitor-widget.cpu p');
+                const memProgress = document.querySelector('.monitor-widget.memory .progress');
+                const memText = document.querySelector('.monitor-widget.memory p');
+                const netIn = document.querySelector('.monitor-widget.network .network-in');
+                const netOut = document.querySelector('.monitor-widget.network .network-out');
+
+                if(cpuProgress && cpuText) {
+                    const newCpu = Math.floor(Math.random() * 15) + 55;
+                    cpuProgress.style.width = newCpu + '%';
+                    cpuText.textContent = newCpu + '%';
+                }
+                if(memProgress && memText) {
+                    const newMem = Math.floor(Math.random() * 10) + 35;
+                    memProgress.style.width = newMem + '%';
+                    memText.textContent = `${newMem}% (${(newMem * 0.2).toFixed(1)}GB / 20GB)`;
+                }
+                if(netIn && netOut) {
+                    const newIn = (Math.random() * 5 + 12).toFixed(1);
+                    const newOut = (Math.random() * 2 + 1.5).toFixed(1);
+                    netIn.textContent = newIn + ' MB/s';
+                    netOut.textContent = newOut + ' MB/s';
+                }
+            }, 2000);
+        }
+        
+        function showPage(pageToShow) {
+            stopMonitoring();
+            pageAreas.forEach(page => page.classList.remove('active'));
+            pageToShow.classList.add('active');
+
+            if (pageToShow === widgetArea) {
+                contextNav.style.display = 'none';
+            } else if (pageToShow === profilePage) {
+                menuItems.forEach(item => item.classList.remove('active'));
+            }
+        }
+        
+        function showWidgetDetail(widgetElement) {
+            stopMonitoring();
+
+            const clickedWidgetText = widgetElement.querySelector('p').textContent;
+            const widgetGroup = widgetElement.closest('.widget-group');
+            const widgetGroupId = widgetGroup.id;
+            const sectionMenuItem = document.querySelector(`.main-menu-item[data-target="${widgetGroupId}"]`);
+            const sectionName = sectionMenuItem.querySelector('.title').textContent;
+
+            breadcrumbs.innerHTML = `<a href="#" id="home-breadcrumb">Главная</a> <span>/</span> <a href="#" class="breadcrumb-section" data-target="${widgetGroupId}">${sectionName}</a> <span>/</span> <span>${clickedWidgetText}</span>`;
+            contextNav.style.display = 'flex';
+
+            tileNavigation.innerHTML = '';
+            widgetGroup.querySelectorAll('.widget').forEach(sibling => {
+                const siblingText = sibling.querySelector('p').textContent;
+                const navItem = document.createElement('div');
+                navItem.classList.add('tile-nav-item');
+                if (siblingText === clickedWidgetText) {
+                    navItem.classList.add('active');
+                }
+                navItem.textContent = siblingText;
+                tileNavigation.appendChild(navItem);
+            });
+
+            pageAreas.forEach(page => page.classList.remove('active'));
+            widgetDetailArea.classList.add('active');
+
+            if (clickedWidgetText === 'Мониторинг' || clickedWidgetText === 'Monitoring') {
+                widgetDetailArea.innerHTML = `
+                    <h2>${clickedWidgetText}</h2>
+                    <div class="monitoring-dashboard">
+                        <div class="monitor-widget cpu"><h3>CPU Load</h3><div class="progress-bar"><div class="progress" style="width: 65%;"></div></div><p>65%</p></div>
+                        <div class="monitor-widget memory"><h3>Memory Usage</h3><div class="progress-bar"><div class="progress" style="width: 40%;"></div></div><p>40% (8GB / 20GB)</p></div>
+                        <div class="monitor-widget network"><h3>Network Traffic</h3><div class="network-stats"><p><strong>In:</strong> <span class="network-in">15.2 MB/s</span></p><p><strong>Out:</strong> <span class="network-out">2.8 MB/s</span></p></div></div>
+                        <div class="monitor-widget disk"><h3>Disk I/O</h3><div class="progress-bar"><div class="progress" style="width: 15%;"></div></div><p>15%</p></div>
+                    </div>`;
+                startMonitoringUpdates();
+            } else {
+                widgetDetailArea.innerHTML = `<h2>${clickedWidgetText}</h2><p>Здесь будет подробное содержимое для виджета "${clickedWidgetText}".</p>`;
+            }
+        }
+
+        // --- Initial Load ---
+        const initialTheme = localStorage.getItem('theme') || 'dark';
+        applyTheme(initialTheme);
+        localStorage.setItem('theme', initialTheme);
+
+        const initialLang = localStorage.getItem('lang') || 'ru';
+        updateLanguage(initialLang);
+        localStorage.setItem('lang', initialLang);
+
+        // --- Event Listeners ---
+        menuItems.forEach(item => {
+            item.addEventListener('click', function() {
+                menuItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                const targetId = this.dataset.target;
+                document.querySelectorAll('.widget-group').forEach(group => {
+                    group.classList.toggle('active', group.id === targetId);
                 });
+                showPage(widgetArea);
             });
+        });
+        
+        widgets.forEach(widget => {
+            widget.addEventListener('click', () => showWidgetDetail(widget));
+        });
 
-            profileSettingsBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                document.querySelectorAll('.popup-menu.visible').forEach(p => p.classList.remove('visible'));
-                showPage(profilePage);
+        tileNavigation.addEventListener('click', (e) => {
+            if (e.target.classList.contains('tile-nav-item')) {
+                const widgetText = e.target.textContent;
+                const activeWidgetGroup = document.querySelector('.main-menu-item.active').dataset.target;
+                const group = document.getElementById(activeWidgetGroup);
+                if (group) {
+                    const targetWidget = Array.from(group.querySelectorAll('.widget')).find(w => w.querySelector('p').textContent === widgetText);
+                    if(targetWidget) showWidgetDetail(targetWidget);
+                }
+            }
+        });
+        
+        breadcrumbs.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (e.target.id === 'home-breadcrumb') {
+                showPage(widgetArea);
+            } else if (e.target.classList.contains('breadcrumb-section')) {
+                const targetId = e.target.dataset.target;
+                const targetMenuItem = document.querySelector(`.main-menu-item[data-target="${targetId}"]`);
+                if (targetMenuItem) targetMenuItem.click();
+            }
+        });
+
+        profileSettingsBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelectorAll('.popup-menu.visible').forEach(p => p.classList.remove('visible'));
+            showPage(profilePage);
+            // This logic has been moved to the Profile Page Logic IIFE
+        });
+
+        themeSwitch.addEventListener('click', () => {
+            const newTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
+            applyTheme(newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+
+        langSwitcher.addEventListener('click', () => {
+            const newLang = document.body.getAttribute('data-lang') === 'ru' ? 'en' : 'ru';
+            updateLanguage(newLang);
+            localStorage.setItem('lang', newLang);
+        });
+        
+        // --- Popups ---
+        setupPopup('bell-icon', 'notification-popup');
+        setupPopup('user-avatar', 'profile-dropdown');
+        
+        function setupPopup(triggerId, popupId) {
+            const trigger = document.getElementById(triggerId);
+            const popup = document.getElementById(popupId);
+            if (!trigger || !popup) return;
+            
+            trigger.addEventListener('click', (event) => {
+                event.stopPropagation();
+                document.querySelectorAll('.popup-menu.visible').forEach(p => {
+                    if (p.id !== popupId) p.classList.remove('visible');
+                });
+                popup.classList.toggle('visible');
             });
+        }
+        
+        document.addEventListener('click', () => {
+             document.querySelectorAll('.popup-menu.visible').forEach(p => p.classList.remove('visible'));
+        });
+
+        // --- Profile Page Logic (IIFE to avoid global scope pollution) ---
+        (function () {
+            if (!profilePage) return; // Don't run if profile page elements aren't there
 
             const profileMenuItems = document.querySelectorAll('.profile-menu-item');
             const profileSections = document.querySelectorAll('.profile-section');
+            const changePasswordBtn = document.getElementById('changePasswordBtn');
+            const passwordChangeForm = document.getElementById('passwordChangeForm');
+            const newPasswordInput = document.getElementById('newPassword');
+            const passwordStrengthIndicator = document.querySelector('.password-strength-indicator');
+            const cancelPasswordChangeBtn = passwordChangeForm.querySelector('.btn-secondary');
 
+            // --- Profile Tabs Navigation ---
             profileMenuItems.forEach(item => {
                 item.addEventListener('click', function(e) {
                     e.preventDefault();
                     profileMenuItems.forEach(i => i.classList.remove('active'));
                     this.classList.add('active');
-                    
                     profileSections.forEach(section => section.classList.remove('active'));
                     const targetSection = document.getElementById(this.dataset.target);
                     if (targetSection) {
@@ -375,97 +591,16 @@
                 });
             });
 
-            function setupPopup(triggerId, popupId) {
-                const trigger = document.getElementById(triggerId);
-                const popup = document.getElementById(popupId);
-                trigger.addEventListener('click', (event) => {
-                    event.stopPropagation();
-                    document.querySelectorAll('.popup-menu.visible').forEach(p => {
-                        if (p.id !== popupId) p.classList.remove('visible');
-                    });
-                    popup.classList.toggle('visible');
-                });
-            }
-            setupPopup('bell-icon', 'notification-popup');
-            setupPopup('user-avatar', 'profile-dropdown');
-
-            document.addEventListener('click', (event) => {
-                if (!event.target.closest('.popup-menu, .icon-btn, .user-profile')) {
-                    document.querySelectorAll('.popup-menu.visible').forEach(p => p.classList.remove('visible'));
-                }
-            });
-
-            const themeSwitch = document.querySelector('.theme-switch');
-            themeSwitch.addEventListener('click', () => {
-                document.body.classList.toggle('dark-mode');
-                themeSwitch.classList.toggle('active');
-            });
-            
-            const searchInput = document.getElementById('page-search');
-            searchInput.addEventListener('input', () => {
-                const searchTerm = searchInput.value.toLowerCase().trim();
-                const activeGroup = document.querySelector('.widget-group.active');
-                if (!activeGroup) return;
-
-                activeGroup.querySelectorAll('.widget').forEach(widget => {
-                    const textElement = widget.querySelector('p');
-                    const widgetText = textElement.textContent.toLowerCase();
-                    widget.style.display = widgetText.includes(searchTerm) ? 'flex' : 'none';
-                });
-            });
-
-            const translations = {};
-            document.querySelectorAll('[data-lang-text], [data-lang-placeholder]').forEach(el => {
-                const key = el.dataset.langText || el.dataset.langPlaceholder;
-                const parts = key.split('|');
-                translations[key] = { ru: parts[0].substring(3), en: parts[1].substring(3) };
-            });
-
-            function updateLanguage(lang) {
-                const langIcon = document.getElementById('lang-icon');
-                if (lang === 'ru') {
-                    langIcon.setAttribute('icon', 'emojione:flag-for-russia');
-                } else {
-                    langIcon.setAttribute('icon', 'emojione:flag-for-united-kingdom');
-                }
-                document.body.setAttribute('data-lang', lang);
-                document.querySelectorAll('[data-lang-text]').forEach(el => {
-                    const key = el.dataset.langText;
-                    const target = el.querySelector('span') || el;
-                    if(target && translations[key]) {
-                         if (el.tagName === 'LABEL') {
-                            el.innerHTML = translations[key][lang];
-                        } else {
-                            target.innerHTML = translations[key][lang];
-                        }
-                    }
-                });
-                document.querySelectorAll('[data-lang-placeholder]').forEach(el => {
-                    el.setAttribute('placeholder', translations[el.dataset.langPlaceholder][lang]);
-                });
-            }
-            
-            updateLanguage(document.body.getAttribute('data-lang'));
-
-            document.getElementById('lang-switcher').addEventListener('click', () => {
-                const newLang = document.body.getAttribute('data-lang') === 'ru' ? 'en' : 'ru';
-                updateLanguage(newLang);
-            });
-
-            const changePasswordBtn = document.getElementById('changePasswordBtn');
-            const passwordChangeForm = document.getElementById('passwordChangeForm');
-            const newPasswordInput = document.getElementById('newPassword');
-            const passwordStrengthIndicator = document.querySelector('.password-strength-indicator');
-            const cancelPasswordChangeBtn = passwordChangeForm.querySelector('.btn-secondary');
-
+            // --- Change Password Logic ---
             changePasswordBtn.addEventListener('click', () => {
                 passwordChangeForm.classList.toggle('hidden');
             });
+
             cancelPasswordChangeBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 passwordChangeForm.classList.add('hidden');
             });
-
+            
             function checkPasswordStrength(password) {
                 let strength = 0;
                 if (password.length >= 8) strength++;
@@ -479,93 +614,97 @@
                 const password = newPasswordInput.value;
                 const strength = checkPasswordStrength(password);
                 const bars = passwordStrengthIndicator.querySelectorAll('.strength-bar');
-
-                bars.forEach(bar => {
-                    bar.style.backgroundColor = 'var(--light-border)'; // Reset color
-                    bar.classList.remove('weak', 'medium', 'strong');
-                });
-
-                if (password.length > 0) {
-                    for (let i = 0; i < strength; i++) {
-                        if (strength <= 1) bars[i].classList.add('weak');
-                        else if (strength <= 3) bars[i].classList.add('medium');
-                        else bars[i].classList.add('strong');
-                    }
-                }
-            });
-
-            // --- ЛОГИКА НАСТРОЕК ИНТЕРФЕЙСА ---
-            const interfaceLanguageSelect = document.getElementById('interfaceLanguage');
-            const themeRadios = document.querySelectorAll('input[name="theme"]');
-            const timeFormatRadios = document.querySelectorAll('input[name="timeFormat"]');
-            const timeZoneSelect = document.getElementById('timeZone');
-            const currentTimeSpan = document.getElementById('currentTime');
-
-            // Синхронизация языка
-            interfaceLanguageSelect.value = document.body.dataset.lang;
-            interfaceLanguageSelect.addEventListener('change', (e) => {
-                updateLanguage(e.target.value);
-            });
-
-            // Синхронизация темы
-            const currentTheme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
-            document.querySelector(`input[name="theme"][value="${currentTheme}"]`).checked = true;
-
-            themeRadios.forEach(radio => {
-                radio.addEventListener('change', (e) => {
-                    if (e.target.value === 'dark') {
-                        document.body.classList.add('dark-mode');
-                        // Глобальный переключатель темы тоже нужно обновить
-                        document.querySelector('.theme-switch').classList.add('active');
-                    } else {
-                        document.body.classList.remove('dark-mode');
-                        document.querySelector('.theme-switch').classList.remove('active');
+                bars.forEach((bar, index) => {
+                    bar.className = 'strength-bar';
+                    if (password.length > 0 && index < strength) {
+                        if (strength <= 1) bar.classList.add('weak');
+                        else if (strength <= 3) bar.classList.add('medium');
+                        else bar.classList.add('strong');
                     }
                 });
             });
 
-            function updateCurrentTime() {
-                const tz = timeZoneSelect.value;
-                const options = {
-                    hour: '2-digit', minute: '2-digit', second: '2-digit',
-                    timeZone: tz
+
+            // --- Save/Cancel Logic ---
+            function saveInitialFormState() {
+                initialFormState = {
+                    email: document.getElementById('email').value,
+                    homeDashboard: document.getElementById('homeDashboard').value,
+                    widgetLimit: document.getElementById('widgetLimit').value,
+                    timeZone: document.getElementById('timeZone').value,
+                    timeFormat: document.querySelector('input[name="timeFormat"]:checked').value,
+                    interfaceLanguage: interfaceLanguageSelect.value,
+                    theme: document.querySelector('input[name="theme"]:checked').value,
                 };
-                // Проверяем выбранный формат времени
-                const selectedTimeFormat = document.querySelector('input[name="timeFormat"]:checked');
-                if (selectedTimeFormat && selectedTimeFormat.value === '12h') {
-                    options.hour12 = true;
-                } else {
-                    options.hour12 = false;
-                }
-                const now = new Date();
-                currentTimeSpan.textContent = ` ${now.toLocaleTimeString(document.body.dataset.lang, options)}`;
             }
 
-            timeZoneSelect.addEventListener('change', updateCurrentTime);
-            timeFormatRadios.forEach(radio => radio.addEventListener('change', updateCurrentTime));
-            updateCurrentTime(); // Инициализация времени при загрузке
+            function hasFormChanged() {
+                return initialFormState.email !== document.getElementById('email').value ||
+                    initialFormState.homeDashboard !== document.getElementById('homeDashboard').value ||
+                    initialFormState.widgetLimit !== document.getElementById('widgetLimit').value ||
+                    initialFormState.timeZone !== document.getElementById('timeZone').value ||
+                    initialFormState.timeFormat !== document.querySelector('input[name="timeFormat"]:checked').value ||
+                    initialFormState.interfaceLanguage !== interfaceLanguageSelect.value ||
+                    initialFormState.theme !== document.querySelector('input[name="theme"]:checked').value;
+            }
 
-            // --- ЛОГИКА ИСТОРИИ АВТОРИЗАЦИЙ ---
+            function toggleSaveButton() {
+                saveProfileBtn.disabled = !hasFormChanged();
+            }
+            
+            [profileForm, interfaceForm].forEach(form => {
+                form.addEventListener('input', toggleSaveButton);
+                form.addEventListener('change', toggleSaveButton);
+            });
+
+            saveProfileBtn.addEventListener('click', () => {
+                alert('Настройки профиля сохранены!');
+                saveInitialFormState(); 
+                toggleSaveButton(); 
+            });
+
+            cancelProfileBtn.addEventListener('click', () => {
+                // Reset values from stored state
+                document.getElementById('email').value = initialFormState.email;
+                document.getElementById('homeDashboard').value = initialFormState.homeDashboard;
+                document.getElementById('widgetLimit').value = initialFormState.widgetLimit;
+                document.getElementById('timeZone').value = initialFormState.timeZone;
+                document.querySelector(`input[name="timeFormat"][value="${initialFormState.timeFormat}"]`).checked = true;
+                
+                // Resync global state for language and theme
+                updateLanguage(initialFormState.interfaceLanguage);
+                applyTheme(initialFormState.theme);
+
+                toggleSaveButton();
+                alert('Изменения отменены.');
+            });
+            
+            // Initial state
+            saveInitialFormState();
+            toggleSaveButton();
+
+
+            // --- Authorization History Logic ---
             const loginHistoryTableBody = document.getElementById('loginHistoryTableBody');
             const clearHistoryBtn = document.getElementById('clearHistoryBtn');
-            const isAdmin = true; // Имитация роли администратора
+            const isAdmin = true; // Mock admin role
 
             if (!isAdmin) {
-                clearHistoryBtn.classList.add('hidden'); // Скрываем кнопку для не-админов
+                clearHistoryBtn.classList.add('hidden');
             }
 
             function generateLoginHistoryData(count = 10) {
                 const data = [];
                 const statuses = ['Успешно', 'Неудача'];
-                const reasons = ['Неверный пароль', 'Блокировка аккаунта', 'Неизвестная ошибка', ''];
+                const reasons = ['Неверный пароль', 'Блокировка аккаунта', ''];
                 const cities = ['Москва', 'Санкт-Петербург', 'Нью-Йорк', 'Токио', 'Лондон'];
 
                 for (let i = 0; i < count; i++) {
                     const status = statuses[Math.floor(Math.random() * statuses.length)];
-                    const reason = (status === 'Неудача') ? reasons[Math.floor(Math.random() * (reasons.length - 1))] : ''; // Последняя причина пустая
-                    const date = new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000); // За последний месяц
+                    const reason = (status === 'Неудача') ? reasons[Math.floor(Math.random() * reasons.length)] : '';
+                    const date = new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000);
                     data.push({
-                        dateTime: date.toLocaleString(),
+                        dateTime: date.toLocaleString(document.body.dataset.lang),
                         ipAddress: `192.168.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`,
                         cityRegion: cities[Math.floor(Math.random() * cities.length)],
                         status: status,
@@ -578,7 +717,8 @@
             let loginHistory = generateLoginHistoryData();
 
             function renderLoginHistoryTable() {
-                loginHistoryTableBody.innerHTML = ''; // Очищаем таблицу перед рендерингом
+                if (!loginHistoryTableBody) return;
+                loginHistoryTableBody.innerHTML = '';
                 loginHistory.forEach(entry => {
                     const row = loginHistoryTableBody.insertRow();
                     if (entry.status === 'Неудача') {
@@ -592,8 +732,6 @@
                 });
             }
 
-            renderLoginHistoryTable(); // Инициализация таблицы при загрузке
-
             clearHistoryBtn.addEventListener('click', () => {
                 if (confirm('Вы уверены, что хотите очистить историю авторизаций?')) {
                     loginHistory = [];
@@ -602,232 +740,27 @@
                 }
             });
 
-            // --- ОБЩАЯ ЛОГИКА ДЕЙСТВИЙ ПРОФИЛЯ (СОХРАНИТЬ/ОТМЕНИТЬ) ---
-            const profileForm = document.querySelector('#profile-main-data-section'); // Область для отслеживания изменений
-            const interfaceForm = document.querySelector('#profile-interface-section');
-            const saveProfileBtn = document.getElementById('saveProfileBtn');
-            const cancelProfileBtn = document.getElementById('cancelProfileBtn');
-            const logoutBtn = document.querySelector('#profile-dropdown a:last-child'); // Кнопка "Выход"
+            // Initial render
+            renderLoginHistoryTable();
 
-            let initialFormState = {}; // Для хранения начального состояния формы
-
-            function saveInitialFormState() {
-                initialFormState = {
-                    // Основные данные
-                    fullName: document.getElementById('fullName').value,
-                    email: document.getElementById('email').value,
-                    // Настройки интерфейса
-                    homeDashboard: document.getElementById('homeDashboard').value,
-                    widgetLimit: document.getElementById('widgetLimit').value,
-                    timeZone: document.getElementById('timeZone').value,
-                    timeFormat: document.querySelector('input[name="timeFormat"]:checked').value,
-                    interfaceLanguage: document.getElementById('interfaceLanguage').value,
-                    theme: document.querySelector('input[name="theme"][value="dark"]').checked ? 'dark' : 'light',
-                };
-            }
-
-            function hasFormChanged() {
-                // Проверяем Основные данные
-                if (initialFormState.fullName !== document.getElementById('fullName').value ||
-                    initialFormState.email !== document.getElementById('email').value) {
-                    return true;
-                }
-                // Проверяем Настройки интерфейса
-                if (initialFormState.homeDashboard !== document.getElementById('homeDashboard').value ||
-                    initialFormState.widgetLimit !== document.getElementById('widgetLimit').value ||
-                    initialFormState.timeZone !== document.getElementById('timeZone').value ||
-                    initialFormState.timeFormat !== document.querySelector('input[name="timeFormat"]:checked').value ||
-                    initialFormState.interfaceLanguage !== document.getElementById('interfaceLanguage').value ||
-                    initialFormState.theme !== (document.querySelector('input[name="theme"][value="dark"]').checked ? 'dark' : 'light')) {
-                    return true;
-                }
-                return false;
-            }
-
-            function toggleSaveButton() {
-                saveProfileBtn.disabled = !hasFormChanged();
-                saveProfileBtn.classList.toggle('btn-disabled', !hasFormChanged());
-            }
-
-            // Отслеживание изменений в обеих формах
-            profileForm.addEventListener('input', toggleSaveButton);
-            profileForm.addEventListener('change', toggleSaveButton);
-
-            interfaceForm.addEventListener('input', toggleSaveButton);
-            interfaceForm.addEventListener('change', toggleSaveButton);
-            
-
-            saveProfileBtn.addEventListener('click', () => {
-                // Валидация E-mail
-                const emailInput = document.getElementById('email');
-                if (!emailInput.value.match(/^[^@]+@[^@]+\.[^@]+$/)) {
-                    alert('Пожалуйста, введите корректный E-mail.');
-                    emailInput.focus();
-                    return;
-                }
-                
-                // Имитация сохранения
-                alert('Настройки профиля сохранены!');
-                saveInitialFormState(); // Обновляем начальное состояние
-                toggleSaveButton(); // Деактивируем кнопку сохранения
-            });
-
-            cancelProfileBtn.addEventListener('click', () => {
-                // Возвращаем исходные значения
-                document.getElementById('fullName').value = initialFormState.fullName;
-                document.getElementById('email').value = initialFormState.email;
-                document.getElementById('homeDashboard').value = initialFormState.homeDashboard;
-                document.getElementById('widgetLimit').value = initialFormState.widgetLimit;
-                document.getElementById('timeZone').value = initialFormState.timeZone;
-                document.querySelector(`input[name="timeFormat"][value="${initialFormState.timeFormat}"]`).checked = true;
-                document.getElementById('interfaceLanguage').value = initialFormState.interfaceLanguage;
-                
-                const currentThemeRadio = document.querySelector(`input[name="theme"][value="${initialFormState.theme}"]`);
-                if (currentThemeRadio) currentThemeRadio.checked = true;
-
-
-                // Пересинхронизация глобальной темы и языка
-                updateLanguage(initialFormState.interfaceLanguage);
-                if (initialFormState.theme === 'dark') {
-                    document.body.classList.add('dark-mode');
-                    document.querySelector('.theme-switch').classList.add('active');
-                } else {
-                    document.body.classList.remove('dark-mode');
-                    document.querySelector('.theme-switch').classList.remove('active');
-                }
-                updateCurrentTime(); // Обновляем отображение времени
-
-                toggleSaveButton(); // Деактивируем кнопку сохранения
-                alert('Изменения отменены.');
-            });
-
-            logoutBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                alert('Вы вышли из системы.');
-                // В реальном приложении здесь был бы редирект на страницу входа
-            });
-
-            saveInitialFormState(); // Сохраняем начальное состояние при загрузке страницы
-            toggleSaveButton(); // Инициализируем состояние кнопки сохранения
-
-
-            // --- ЛОГИКА ХЛЕБНЫХ КРОШЕК И НАВИГАЦИИ ПО ПЛИТКАМ ---
-            const widgets = document.querySelectorAll('.widget');
-            const contextNav = document.querySelector('.context-nav');
-            const breadcrumbs = document.getElementById('breadcrumbs');
-            const tileNavigation = document.getElementById('tile-navigation');
-            const widgetDetailArea = document.getElementById('widget-detail-area');
-
-            function resetToWidgetView() {
-                contextNav.style.display = 'none';
-                showPage(widgetArea);
-            }
-
-            function showWidgetDetail(widgetElement) {
-                const clickedWidgetText = widgetElement.querySelector('p').textContent;
-                const widgetGroup = widgetElement.closest('.widget-group');
-                const widgetGroupId = widgetGroup.id;
-                const sectionMenuItem = document.querySelector(`.main-menu-item[data-target="${widgetGroupId}"]`);
-                const sectionName = sectionMenuItem.querySelector('.title').textContent;
-
-                // 1. Показать и обновить хлебные крошки
-                breadcrumbs.innerHTML = `<a href="#" id="home-breadcrumb">Главная</a> <span>/</span> <a href="#" class="breadcrumb-section" data-target="${widgetGroupId}">${sectionName}</a> <span>/</span> ${clickedWidgetText}`;
-                contextNav.style.display = 'flex';
-
-                // 2. Создать навигацию по плиткам
-                tileNavigation.innerHTML = '';
-                const siblingWidgets = widgetGroup.querySelectorAll('.widget');
-                siblingWidgets.forEach(sibling => {
-                    const siblingText = sibling.querySelector('p').textContent;
-                    const navItem = document.createElement('div');
-                    navItem.classList.add('tile-nav-item');
-                    if (siblingText === clickedWidgetText) {
-                        navItem.classList.add('active');
-                    }
-                    navItem.textContent = siblingText;
-                    tileNavigation.appendChild(navItem);
-                });
-
-                // 3. Показать детальный вид
-                pageAreas.forEach(page => page.classList.remove('active'));
-                widgetDetailArea.classList.add('active');
-
-                if (clickedWidgetText === 'Мониторинг' || clickedWidgetText === 'Monitoring') {
-                    widgetDetailArea.innerHTML = `
-                        <h2>${clickedWidgetText}</h2>
-                        <div class="monitoring-dashboard">
-                            <div class="monitor-widget">
-                                <h3>CPU Load</h3>
-                                <div class="progress-bar">
-                                    <div class="progress" style="width: 65%;"></div>
-                                </div>
-                                <p>65%</p>
-                            </div>
-                            <div class="monitor-widget">
-                                <h3>Memory Usage</h3>
-                                <div class="progress-bar">
-                                    <div class="progress" style="width: 40%;"></div>
-                                </div>
-                                <p>40% (8GB / 20GB)</p>
-                            </div>
-                            <div class="monitor-widget">
-                                <h3>Network Traffic</h3>
-                                <div class="network-stats">
-                                    <p><strong>In:</strong> 15.2 MB/s</p>
-                                    <p><strong>Out:</strong> 2.8 MB/s</p>
-                                </div>
-                            </div>
-                            <div class="monitor-widget">
-                                <h3>Disk I/O</h3>
-                                <div class="progress-bar">
-                                    <div class="progress" style="width: 15%;"></div>
-                                </div>
-                                <p>15%</p>
-                            </div>
-                        </div>
-                    `;
-                } else {
-                    widgetDetailArea.innerHTML = `<h2>${clickedWidgetText}</h2><p>Здесь будет подробное содержимое для виджета "${clickedWidgetText}".</p>`;
-                }
-
-
-                // 4. Добавить обработчик для возврата на главную
-                document.getElementById('home-breadcrumb').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    resetToWidgetView();
+            // --- Listeners for controls already in the IIFE ---
+            if (interfaceLanguageSelect) {
+                interfaceLanguageSelect.addEventListener('change', (e) => {
+                    updateLanguage(e.target.value);
+                    localStorage.setItem('lang', e.target.value);
                 });
             }
 
-            widgets.forEach(widget => {
-                widget.addEventListener('click', () => {
-                    showWidgetDetail(widget);
+            if (themeRadios.length) {
+                themeRadios.forEach(radio => {
+                    radio.addEventListener('change', (e) => {
+                        applyTheme(e.target.value);
+                        localStorage.setItem('theme', e.target.value);
+                    });
                 });
-            });
-
-            tileNavigation.addEventListener('click', (e) => {
-                if (e.target.classList.contains('tile-nav-item')) {
-                    const widgetText = e.target.textContent;
-                    // Находим соответствующий виджет и "кликаем" по нему
-                    const activeWidgetGroup = document.querySelector('.widget-group.active');
-                    const targetWidget = Array.from(activeWidgetGroup.querySelectorAll('.widget')).find(w => w.querySelector('p').textContent === widgetText);
-                    if(targetWidget) {
-                        showWidgetDetail(targetWidget);
-                    }
-                }
-            });
-
-            breadcrumbs.addEventListener('click', (e) => {
-                if (e.target.classList.contains('breadcrumb-section')) {
-                    e.preventDefault();
-                    const targetId = e.target.dataset.target;
-                    const targetMenuItem = document.querySelector(`.main-menu-item[data-target="${targetId}"]`);
-                    if(targetMenuItem) {
-                        targetMenuItem.click();
-                        resetToWidgetView();
-                    }
-                }
-            });
-        });
-    </script>
+            }
+        })();
+    });
+</script>
 </body>
 </html>

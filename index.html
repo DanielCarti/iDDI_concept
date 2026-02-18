@@ -13,11 +13,15 @@
         <div class="top-bar">
             <div class="logo">
                 <a href="index.html"><img src="logo_inline.png" alt="Inline Telecom Solutions Logo"></a>
+                <a href="index.html" class="idddi-title">iDDI</a>
             </div>
             <div class="controls">
-                <div class="search-bar">
-                    <iconify-icon icon="eva:search-outline"></iconify-icon>
-                    <input type="text" id="page-search" data-lang-placeholder="ru:Фильтр виджетов...|en:Filter widgets...">
+                <div class="search-bar-container">
+                    <div class="search-bar">
+                        <iconify-icon icon="eva:search-outline"></iconify-icon>
+                        <input type="text" id="page-search" data-lang-placeholder="ru:Поиск виджетов...|en:Search widgets..." autocomplete="off">
+                    </div>
+                    <div id="search-results" class="search-results-popup"></div>
                 </div>
                 <div class="theme-switch active">
                     <div class="knob"></div>
@@ -101,7 +105,10 @@
                         <div class="widget"><iconify-icon icon="mdi:swap-horizontal-bold"></iconify-icon><p data-lang-text="ru:Переадресации|en:Forwarding"></p></div>
                         <div class="widget"><iconify-icon icon="carbon:subnet-acl-rules"></iconify-icon><p data-lang-text="ru:ACL|en:ACL"></p></div>
                         <div class="widget"><iconify-icon icon="akar-icons:statistic-up"></iconify-icon><p data-lang-text="ru:Статистика DNS|en:DNS Statistics"></p></div>
-                        <div class="widget"><iconify-icon icon="carbon:document-blank"></iconify-icon><p data-lang-text="ru:Базовые конфигурации|en:Baselines"></p></div>
+                        <div class="widget"><iconify-icon icon="mdi:calendar-clock-outline"></iconify-icon><p data-lang-text="ru:Управление задачами (Расписание)|en:Task Management (Schedule)"></p></div>
+                        <div class="widget"><iconify-icon icon="mdi:server-network"></iconify-icon><p data-lang-text="ru:Управление сырыми конфигурациями узлов|en:Raw Node Configurations"></p></div>
+                        <div class="widget"><iconify-icon icon="mdi:format-list-checks"></iconify-icon><p data-lang-text="ru:Работа с записями правил|en:Rule Records Management"></p></div>
+                        <div class="widget"><iconify-icon icon="mdi:file-tree"></iconify-icon><p data-lang-text="ru:Управление схемами правил, директив и файлов конфигурации|en:Rule, Directive and Configuration File Schema Management"></p></div>
                         <div class="widget"><iconify-icon icon="akar-icons:statistic-up"></iconify-icon><p data-lang-text="ru:Метрики|en:Metrics"></p></div>
                         <div class="widget"><iconify-icon icon="carbon:network-enterprise"></iconify-icon><p data-lang-text="ru:Управление узлами|en:Node Management"></p></div>
                     </div>
@@ -504,7 +511,9 @@
         tileNavigation.addEventListener('click', (e) => {
             if (e.target.classList.contains('tile-nav-item')) {
                 const widgetText = e.target.textContent;
-                const activeWidgetGroup = document.querySelector('.main-menu-item.active').dataset.target;
+                const activeMenuItem = document.querySelector('.main-menu-item.active');
+                if (!activeMenuItem) return;
+                const activeWidgetGroup = activeMenuItem.dataset.target;
                 const group = document.getElementById(activeWidgetGroup);
                 if (group) {
                     const targetWidget = Array.from(group.querySelectorAll('.widget')).find(w => w.querySelector('p').textContent === widgetText);
@@ -516,7 +525,8 @@
         breadcrumbs.addEventListener('click', (e) => {
             e.preventDefault();
             if (e.target.id === 'home-breadcrumb') {
-                showPage(widgetArea);
+                 const firstMenuItem = document.querySelector('.main-menu-item[data-target="dashboards-widgets"]');
+                 if(firstMenuItem) firstMenuItem.click();
             } else if (e.target.classList.contains('breadcrumb-section')) {
                 const targetId = e.target.dataset.target;
                 const targetMenuItem = document.querySelector(`.main-menu-item[data-target="${targetId}"]`);
@@ -528,7 +538,6 @@
             e.preventDefault();
             document.querySelectorAll('.popup-menu.visible').forEach(p => p.classList.remove('visible'));
             showPage(profilePage);
-            // This logic has been moved to the Profile Page Logic IIFE
         });
 
         themeSwitch.addEventListener('click', () => {
@@ -541,6 +550,80 @@
             const newLang = document.body.getAttribute('data-lang') === 'ru' ? 'en' : 'ru';
             updateLanguage(newLang);
             localStorage.setItem('lang', newLang);
+        });
+
+        // --- Global Widget Search ---
+        const searchInput = document.getElementById('page-search');
+        const searchResultsContainer = document.getElementById('search-results');
+        const allWidgets = Array.from(document.querySelectorAll('.widget'));
+
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            searchResultsContainer.innerHTML = '';
+
+            if (searchTerm.length < 2) { // Start searching from 2 characters
+                searchResultsContainer.style.display = 'none';
+                return;
+            }
+
+            const matchedWidgets = allWidgets.filter(widget => {
+                const textElement = widget.querySelector('p');
+                return textElement.textContent.toLowerCase().includes(searchTerm);
+            });
+
+            if (matchedWidgets.length > 0) {
+                matchedWidgets.forEach(widget => {
+                    const widgetText = widget.querySelector('p').textContent;
+                    const widgetIcon = widget.querySelector('iconify-icon').getAttribute('icon');
+                    const widgetGroup = widget.closest('.widget-group');
+                    const widgetGroupId = widgetGroup.id;
+                    const sectionMenuItem = document.querySelector(`.main-menu-item[data-target="${widgetGroupId}"]`);
+                    const sectionName = sectionMenuItem.querySelector('.title').textContent;
+
+                    const resultItem = document.createElement('div');
+                    resultItem.classList.add('search-result-item');
+                    resultItem.dataset.widgetText = widgetText;
+                    resultItem.dataset.widgetGroup = widgetGroupId;
+
+                    resultItem.innerHTML = `
+                        <iconify-icon icon="${widgetIcon}"></iconify-icon>
+                        <div>
+                            <p>${widgetText}</p>
+                            <span>${sectionName}</span>
+                        </div>
+                    `;
+                    searchResultsContainer.appendChild(resultItem);
+                });
+                searchResultsContainer.style.display = 'block';
+            } else {
+                searchResultsContainer.style.display = 'none';
+            }
+        });
+
+        searchResultsContainer.addEventListener('click', (e) => {
+            const resultItem = e.target.closest('.search-result-item');
+            if (!resultItem) return;
+
+            const widgetText = resultItem.dataset.widgetText;
+            const widgetGroupId = resultItem.dataset.widgetGroup;
+
+            const targetMenuItem = document.querySelector(`.main-menu-item[data-target="${widgetGroupId}"]`);
+            if (targetMenuItem) {
+                targetMenuItem.click();
+            }
+
+            const targetWidget = allWidgets.find(w => 
+                w.querySelector('p').textContent === widgetText && 
+                w.closest('.widget-group').id === widgetGroupId
+            );
+
+            if (targetWidget) {
+                showWidgetDetail(targetWidget);
+            }
+
+            searchInput.value = '';
+            searchResultsContainer.innerHTML = '';
+            searchResultsContainer.style.display = 'none';
         });
         
         // --- Popups ---
@@ -561,8 +644,13 @@
             });
         }
         
-        document.addEventListener('click', () => {
+        document.addEventListener('click', (e) => {
              document.querySelectorAll('.popup-menu.visible').forEach(p => p.classList.remove('visible'));
+             const searchResultsContainer = document.getElementById('search-results');
+             // Hide search results when clicking outside
+             if (searchResultsContainer && !e.target.closest('.search-bar-container')) {
+                searchResultsContainer.style.display = 'none';
+            }
         });
 
         // --- Profile Page Logic (IIFE to avoid global scope pollution) ---

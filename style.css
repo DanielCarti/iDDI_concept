@@ -63,6 +63,11 @@ body.dark-mode {
 }
 body.dark-mode .top-bar { background-color: var(--dark-surface); border-color: var(--dark-border); }
 
+.logo {
+    display: flex;
+    align-items: center;
+}
+
 .logo img {
     height: 55px;
     width: auto;
@@ -908,4 +913,93 @@ body.dark-mode .monitor-widget p {
 
 .network-stats p {
     margin: 5px 0;
+}
+
+/* --- Стили для надписи iDDI рядом с логотипом --- */
+.idddi-title {
+    font-size: 1.8em; /* Adjust as needed */
+    font-weight: bold;
+    color: var(--light-text-primary); /* Inherit text color from light mode */
+    text-decoration: none;
+    margin-left: 10px; /* Space from the logo */
+    display: flex; /* Align with logo */
+    align-items: center;
+    transition: color 0.3s ease;
+}
+
+body.dark-mode .idddi-title {
+    color: var(--dark-text-primary); /* Inherit text color from dark mode */
+}
+
+.idddi-title:hover {
+    color: var(--light-accent); /* Use accent color on hover for light mode */
+}
+
+body.dark-mode .idddi-title:hover {
+    color: var(--dark-accent); /* Use accent color on hover for dark mode */
+}
+
+/* --- Search Bar with Autocomplete --- */
+.search-bar-container {
+    position: relative;
+}
+
+.search-results-popup {
+    display: none;
+    position: absolute;
+    top: 110%; /* Немного опустим, чтобы не прилипало */
+    left: 0;
+    right: 0;
+    background-color: var(--light-surface);
+    border: 1px solid var(--light-border);
+    border-radius: 12px; /* Закруглим все углы */
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    z-index: 200;
+    max-height: 300px;
+    overflow-y: auto;
+}
+body.dark-mode .search-results-popup {
+    background-color: var(--dark-surface);
+    border-color: var(--dark-border);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+}
+
+.search-result-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+}
+.search-result-item:hover {
+    background-color: var(--light-hover-bg);
+}
+body.dark-mode .search-result-item:hover {
+    background-color: var(--dark-hover-bg);
+}
+
+.search-result-item iconify-icon {
+    font-size: 20px;
+    color: var(--light-accent);
+}
+body.dark-mode .search-result-item iconify-icon {
+    color: var(--dark-accent);
+}
+
+.search-result-item p {
+    margin: 0;
+    color: var(--light-text-primary);
+    font-size: 15px;
+}
+body.dark-mode .search-result-item p {
+    color: var(--dark-text-primary);
+}
+
+.search-result-item span {
+    font-size: 12px;
+    color: var(--light-text-secondary);
+}
+body.dark-mode .search-result-item span {
+    color: var(--dark-text-secondary);
 }

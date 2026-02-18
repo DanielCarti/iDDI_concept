@@ -1022,3 +1022,113 @@ body.dark-mode .search-result-item p {
 body.dark-mode .search-result-item span {
     color: var(--dark-text-secondary);
 }
+
+/* --- MOBILE RESPONSIVENESS --- */
+.hamburger-menu {
+    display: none; /* Hidden by default on desktop */
+}
+
+.mobile-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 998; /* Below the sidebar */
+    opacity: 0;
+    transition: opacity 0.4s var(--ease-in-out-cubic);
+}
+
+.mobile-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 240px; /* Сделаем сайдбар немного уже на планшетах */
+    }
+    .widget-group {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .hamburger-menu {
+        display: flex;
+    }
+
+    .top-bar .logo {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .top-bar .controls {
+        display: none; /* Hide all desktop controls */
+    }
+
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100%;
+        z-index: 1000;
+        transform: translateX(-100%);
+        transition: transform 0.4s var(--ease-in-out-cubic);
+        box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+    }
+    body.dark-mode .sidebar {
+        box-shadow: 4px 0 25px rgba(0,0,0,0.3);
+    }
+
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        height: calc(100% - 60px);
+    }
+    .top-bar {
+        height: 60px;
+        padding: 0 15px;
+    }
+
+    .widget-area, #profile-page, #widget-detail-area {
+        padding: 15px;
+    }
+
+    #profile-page {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .profile-menu {
+        width: 100%;
+        flex-direction: row;
+        overflow-x: auto;
+    }
+
+    .context-nav {
+        padding: 10px 15px;
+    }
+
+    .widget-group {
+        gap: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .widget-group {
+        grid-template-columns: repeat(2, 1fr); /* Всегда 2 колонки на самых маленьких экранах */
+        gap: 10px;
+    }
+    .widget p {
+        font-size: 14px;
+    }
+    .widget iconify-icon {
+        font-size: 36px;
+    }
+}

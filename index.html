@@ -11,6 +11,9 @@
     <div class="container">
         <!-- Верхний бар -->
         <div class="top-bar">
+            <div class="hamburger-menu icon-btn">
+                <iconify-icon icon="mdi:menu"></iconify-icon>
+            </div>
             <div class="logo">
                 <a href="index.html"><img src="logo_inline.png" alt="Inline Telecom Solutions Logo"></a>
                 <a href="index.html" class="idddi-title">iDDI</a>
@@ -330,6 +333,9 @@
         const widgets = document.querySelectorAll('.widget');
         const langSwitcher = document.getElementById('lang-switcher');
         const langIcon = document.getElementById('lang-icon');
+        const hamburgerMenu = document.querySelector('.hamburger-menu');
+        const mobileOverlay = document.querySelector('.mobile-overlay');
+        const sidebar = document.querySelector('.sidebar');
         
         // Profile Page Elements
         const interfaceLanguageSelect = document.getElementById('interfaceLanguage');
@@ -494,6 +500,10 @@
         // --- Event Listeners ---
         menuItems.forEach(item => {
             item.addEventListener('click', function() {
+                if (sidebar.classList.contains('mobile-open')) {
+                    sidebar.classList.remove('mobile-open');
+                    mobileOverlay.classList.remove('active');
+                }
                 menuItems.forEach(i => i.classList.remove('active'));
                 this.classList.add('active');
                 const targetId = this.dataset.target;
@@ -640,7 +650,7 @@
             searchResultsContainer.style.display = 'none';
         });
         
-        // --- Popups ---
+        // --- Popups & Mobile Menu ---
         setupPopup('bell-icon', 'notification-popup');
         setupPopup('user-avatar', 'profile-dropdown');
         
@@ -658,10 +668,20 @@
             });
         }
         
+        hamburgerMenu.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sidebar.classList.toggle('mobile-open');
+            mobileOverlay.classList.toggle('active');
+        });
+
         document.addEventListener('click', (e) => {
              document.querySelectorAll('.popup-menu.visible').forEach(p => p.classList.remove('visible'));
-             const searchResultsContainer = document.getElementById('search-results');
-             // Hide search results when clicking outside
+             
+             if (sidebar.classList.contains('mobile-open') && !e.target.closest('.sidebar') && !e.target.closest('.hamburger-menu')) {
+                sidebar.classList.remove('mobile-open');
+                mobileOverlay.classList.remove('active');
+             }
+
              if (searchResultsContainer && !e.target.closest('.search-bar-container')) {
                 searchResultsContainer.style.display = 'none';
             }
@@ -669,7 +689,7 @@
 
         // --- Profile Page Logic (IIFE to avoid global scope pollution) ---
         (function () {
-            if (!profilePage) return; // Don't run if profile page elements aren't there
+            if (!profilePage) return;
 
             const profileMenuItems = document.querySelectorAll('.profile-menu-item');
             const profileSections = document.querySelectorAll('.profile-section');
@@ -679,7 +699,6 @@
             const passwordStrengthIndicator = document.querySelector('.password-strength-indicator');
             const cancelPasswordChangeBtn = passwordChangeForm.querySelector('.btn-secondary');
 
-            // --- Profile Tabs Navigation ---
             profileMenuItems.forEach(item => {
                 item.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -693,7 +712,6 @@
                 });
             });
 
-            // --- Change Password Logic ---
             changePasswordBtn.addEventListener('click', () => {
                 passwordChangeForm.classList.toggle('hidden');
             });
@@ -726,8 +744,6 @@
                 });
             });
 
-
-            // --- Save/Cancel Logic ---
             function saveInitialFormState() {
                 initialFormState = {
                     email: document.getElementById('email').value,
@@ -766,30 +782,23 @@
             });
 
             cancelProfileBtn.addEventListener('click', () => {
-                // Reset values from stored state
                 document.getElementById('email').value = initialFormState.email;
                 document.getElementById('homeDashboard').value = initialFormState.homeDashboard;
                 document.getElementById('widgetLimit').value = initialFormState.widgetLimit;
                 document.getElementById('timeZone').value = initialFormState.timeZone;
                 document.querySelector(`input[name="timeFormat"][value="${initialFormState.timeFormat}"]`).checked = true;
-                
-                // Resync global state for language and theme
                 updateLanguage(initialFormState.interfaceLanguage);
                 applyTheme(initialFormState.theme);
-
                 toggleSaveButton();
                 alert('Изменения отменены.');
             });
             
-            // Initial state
             saveInitialFormState();
             toggleSaveButton();
 
-
-            // --- Authorization History Logic ---
             const loginHistoryTableBody = document.getElementById('loginHistoryTableBody');
             const clearHistoryBtn = document.getElementById('clearHistoryBtn');
-            const isAdmin = true; // Mock admin role
+            const isAdmin = true;
 
             if (!isAdmin) {
                 clearHistoryBtn.classList.add('hidden');
@@ -842,10 +851,8 @@
                 }
             });
 
-            // Initial render
             renderLoginHistoryTable();
 
-            // --- Listeners for controls already in the IIFE ---
             if (interfaceLanguageSelect) {
                 interfaceLanguageSelect.addEventListener('change', (e) => {
                     updateLanguage(e.target.value);
@@ -864,5 +871,6 @@
         })();
     });
 </script>
+<div class="mobile-overlay"></div>
 </body>
 </html>

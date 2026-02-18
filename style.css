@@ -16,8 +16,10 @@
     --dark-accent: #58a6ff;
     --light-hover-bg: #e9eaf2;
     --dark-hover-bg: #3a3b3c;
-    --transition-fast: 0.2s ease;
-    --transition-medium: 0.3s ease;
+    --ease-out-quint: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in-out-cubic: cubic-bezier(0.65, 0, 0.35, 1);
+    --transition-fast: 0.25s var(--ease-in-out-cubic);
+    --transition-medium: 0.4s var(--ease-in-out-cubic);
 }
 
 /* --- ОБЩИЕ СТИЛИ --- */
@@ -211,11 +213,28 @@ body.dark-mode .icon-btn iconify-icon, body.dark-mode .search-bar iconify-icon {
     display: none;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 30px;
-    animation: fadeIn 0.5s ease;
 }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-.widget-group.active { display: grid; }
+@keyframes fade-slide-up {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.widget-group.active { 
+    display: grid; 
+}
+
+/* Добавляем анимацию для виджетов внутри активной группы */
+.widget-group.active .widget {
+    opacity: 0; /* Начальное состояние для анимации */
+    animation: fade-slide-up 0.5s var(--ease-out-quint) forwards;
+}
 
 .widget {
     background-color: var(--light-surface);

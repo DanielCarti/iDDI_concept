@@ -498,7 +498,21 @@
                 this.classList.add('active');
                 const targetId = this.dataset.target;
                 document.querySelectorAll('.widget-group').forEach(group => {
-                    group.classList.toggle('active', group.id === targetId);
+                    const isActive = group.id === targetId;
+                    group.classList.toggle('active', isActive);
+
+                    if (isActive) {
+                        // Staggered animation for widgets
+                        const widgetsInGroup = group.querySelectorAll('.widget');
+                        widgetsInGroup.forEach((widget, index) => {
+                            // Reset animation before applying it again
+                            widget.style.animation = 'none';
+                            // Reflow hack to restart animation
+                            void widget.offsetWidth; 
+                            widget.style.animation = '';
+                            widget.style.animationDelay = `${index * 50}ms`;
+                        });
+                    }
                 });
                 showPage(widgetArea);
             });

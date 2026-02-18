@@ -85,6 +85,27 @@
                     <iconify-icon icon="octicon:log-16"></iconify-icon>
                     <span class="title" data-lang-text="ru:Логи|en:Logs"></span>
                 </div>
+
+                <div class="sidebar-controls">
+                    <a href="#" class="sidebar-control-item" id="sidebar-profile-btn">
+                        <iconify-icon icon="clarity:user-line"></iconify-icon>
+                        <span data-lang-text="ru:Профиль|en:Profile">Профиль</span>
+                    </a>
+                    <div class="sidebar-control-item">
+                        <iconify-icon icon="mdi:theme-light-dark"></iconify-icon>
+                        <span data-lang-text="ru:Тема|en:Theme">Тема</span>
+                        <div class="theme-switch" id="theme-switch-mobile">
+                            <div class="knob"></div>
+                        </div>
+                    </div>
+                     <div class="sidebar-control-item">
+                        <iconify-icon icon="mdi:translate"></iconify-icon>
+                        <span data-lang-text="ru:Язык|en:Language">Язык</span>
+                        <div class="icon-btn" id="lang-switcher-mobile">
+                            <iconify-icon icon="emojione:flag-for-russia" id="lang-icon-mobile"></iconify-icon>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Контейнер для переключаемых областей -->
@@ -325,7 +346,7 @@
         const widgetArea = document.querySelector('.widget-area');
         const profilePage = document.getElementById('profile-page');
         const profileSettingsBtn = document.getElementById('profile-settings-btn');
-        const themeSwitch = document.querySelector('.theme-switch');
+        const themeSwitch = document.querySelector('.theme-switch:not(#theme-switch-mobile)');
         const contextNav = document.querySelector('.context-nav');
         const breadcrumbs = document.getElementById('breadcrumbs');
         const tileNavigation = document.getElementById('tile-navigation');
@@ -337,6 +358,12 @@
         const mobileOverlay = document.querySelector('.mobile-overlay');
         const sidebar = document.querySelector('.sidebar');
         
+        // Mobile & Sidebar Controls
+        const sidebarProfileBtn = document.getElementById('sidebar-profile-btn');
+        const themeSwitchMobile = document.getElementById('theme-switch-mobile');
+        const langSwitcherMobile = document.getElementById('lang-switcher-mobile');
+        const langIconMobile = document.getElementById('lang-icon-mobile');
+
         // Profile Page Elements
         const interfaceLanguageSelect = document.getElementById('interfaceLanguage');
         const themeRadios = document.querySelectorAll('input[name="theme"]');
@@ -360,7 +387,10 @@
         // --- Functions ---
         function updateLanguage(lang) {
             if (!lang) return;
-            langIcon.setAttribute('icon', lang === 'ru' ? 'emojione:flag-for-russia' : 'emojione:flag-for-united-kingdom');
+            const icon = lang === 'ru' ? 'emojione:flag-for-russia' : 'emojione:flag-for-united-kingdom';
+            if (langIcon) langIcon.setAttribute('icon', icon);
+            if (langIconMobile) langIconMobile.setAttribute('icon', icon);
+            
             document.body.setAttribute('data-lang', lang);
             document.querySelectorAll('[data-lang-text]').forEach(el => {
                 const key = el.dataset.langText;
@@ -386,10 +416,12 @@
         function applyTheme(theme) {
             if (theme === 'dark') {
                 document.body.classList.add('dark-mode');
-                themeSwitch.classList.add('active');
+                if (themeSwitch) themeSwitch.classList.add('active');
+                if (themeSwitchMobile) themeSwitchMobile.classList.add('active');
             } else {
                 document.body.classList.remove('dark-mode');
-                themeSwitch.classList.remove('active');
+                if (themeSwitch) themeSwitch.classList.remove('active');
+                if (themeSwitchMobile) themeSwitchMobile.classList.remove('active');
             }
             const themeRadio = document.querySelector(`input[name="theme"][value="${theme}"]`);
             if (themeRadio) {
@@ -517,7 +549,6 @@
                         widgetsInGroup.forEach((widget, index) => {
                             // Reset animation before applying it again
                             widget.style.animation = 'none';
-                            // Reflow hack to restart animation
                             void widget.offsetWidth; 
                             widget.style.animation = '';
                             widget.style.animationDelay = `${index * 50}ms`;
@@ -558,97 +589,129 @@
             }
         });
 
-        profileSettingsBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            document.querySelectorAll('.popup-menu.visible').forEach(p => p.classList.remove('visible'));
-            showPage(profilePage);
-        });
+        if (profileSettingsBtn) {
+            profileSettingsBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.popup-menu.visible').forEach(p => p.classList.remove('visible'));
+                showPage(profilePage);
+            });
+        }
+        
+        if (sidebarProfileBtn) {
+             sidebarProfileBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                showPage(profilePage);
+                // Close the sidebar
+                sidebar.classList.remove('mobile-open');
+                mobileOverlay.classList.remove('active');
+            });
+        }
 
-        themeSwitch.addEventListener('click', () => {
-            const newTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
-            applyTheme(newTheme);
-            localStorage.setItem('theme', newTheme);
-        });
+        if (themeSwitch) {
+            themeSwitch.addEventListener('click', () => {
+                const newTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
+                applyTheme(newTheme);
+                localStorage.setItem('theme', newTheme);
+            });
+        }
+        if (themeSwitchMobile) {
+            themeSwitchMobile.addEventListener('click', () => {
+                const newTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
+                applyTheme(newTheme);
+                localStorage.setItem('theme', newTheme);
+            });
+        }
 
-        langSwitcher.addEventListener('click', () => {
-            const newLang = document.body.getAttribute('data-lang') === 'ru' ? 'en' : 'ru';
-            updateLanguage(newLang);
-            localStorage.setItem('lang', newLang);
-        });
+        if (langSwitcher) {
+            langSwitcher.addEventListener('click', () => {
+                const newLang = document.body.getAttribute('data-lang') === 'ru' ? 'en' : 'ru';
+                updateLanguage(newLang);
+                localStorage.setItem('lang', newLang);
+            });
+        }
+        if (langSwitcherMobile) {
+            langSwitcherMobile.addEventListener('click', () => {
+                const newLang = document.body.getAttribute('data-lang') === 'ru' ? 'en' : 'ru';
+                updateLanguage(newLang);
+                localStorage.setItem('lang', newLang);
+            });
+        }
 
         // --- Global Widget Search ---
         const searchInput = document.getElementById('page-search');
         const searchResultsContainer = document.getElementById('search-results');
         const allWidgets = Array.from(document.querySelectorAll('.widget'));
 
-        searchInput.addEventListener('input', () => {
-            const searchTerm = searchInput.value.toLowerCase().trim();
-            searchResultsContainer.innerHTML = '';
+        if (searchInput) {
+            searchInput.addEventListener('input', () => {
+                const searchTerm = searchInput.value.toLowerCase().trim();
+                searchResultsContainer.innerHTML = '';
 
-            if (searchTerm.length < 2) { // Start searching from 2 characters
-                searchResultsContainer.style.display = 'none';
-                return;
-            }
+                if (searchTerm.length < 2) {
+                    searchResultsContainer.style.display = 'none';
+                    return;
+                }
 
-            const matchedWidgets = allWidgets.filter(widget => {
-                const textElement = widget.querySelector('p');
-                return textElement.textContent.toLowerCase().includes(searchTerm);
+                const matchedWidgets = allWidgets.filter(widget => {
+                    const textElement = widget.querySelector('p');
+                    return textElement.textContent.toLowerCase().includes(searchTerm);
+                });
+
+                if (matchedWidgets.length > 0) {
+                    matchedWidgets.forEach(widget => {
+                        const widgetText = widget.querySelector('p').textContent;
+                        const widgetIcon = widget.querySelector('iconify-icon').getAttribute('icon');
+                        const widgetGroup = widget.closest('.widget-group');
+                        const widgetGroupId = widgetGroup.id;
+                        const sectionMenuItem = document.querySelector(`.main-menu-item[data-target="${widgetGroupId}"]`);
+                        const sectionName = sectionMenuItem.querySelector('.title').textContent;
+
+                        const resultItem = document.createElement('div');
+                        resultItem.classList.add('search-result-item');
+                        resultItem.dataset.widgetText = widgetText;
+                        resultItem.dataset.widgetGroup = widgetGroupId;
+
+                        resultItem.innerHTML = `
+                            <iconify-icon icon="${widgetIcon}"></iconify-icon>
+                            <div>
+                                <p>${widgetText}</p>
+                                <span>${sectionName}</span>
+                            </div>
+                        `;
+                        searchResultsContainer.appendChild(resultItem);
+                    });
+                    searchResultsContainer.style.display = 'block';
+                } else {
+                    searchResultsContainer.style.display = 'none';
+                }
             });
 
-            if (matchedWidgets.length > 0) {
-                matchedWidgets.forEach(widget => {
-                    const widgetText = widget.querySelector('p').textContent;
-                    const widgetIcon = widget.querySelector('iconify-icon').getAttribute('icon');
-                    const widgetGroup = widget.closest('.widget-group');
-                    const widgetGroupId = widgetGroup.id;
-                    const sectionMenuItem = document.querySelector(`.main-menu-item[data-target="${widgetGroupId}"]`);
-                    const sectionName = sectionMenuItem.querySelector('.title').textContent;
+            searchResultsContainer.addEventListener('click', (e) => {
+                const resultItem = e.target.closest('.search-result-item');
+                if (!resultItem) return;
 
-                    const resultItem = document.createElement('div');
-                    resultItem.classList.add('search-result-item');
-                    resultItem.dataset.widgetText = widgetText;
-                    resultItem.dataset.widgetGroup = widgetGroupId;
+                const widgetText = resultItem.dataset.widgetText;
+                const widgetGroupId = resultItem.dataset.widgetGroup;
 
-                    resultItem.innerHTML = `
-                        <iconify-icon icon="${widgetIcon}"></iconify-icon>
-                        <div>
-                            <p>${widgetText}</p>
-                            <span>${sectionName}</span>
-                        </div>
-                    `;
-                    searchResultsContainer.appendChild(resultItem);
-                });
-                searchResultsContainer.style.display = 'block';
-            } else {
+                const targetMenuItem = document.querySelector(`.main-menu-item[data-target="${widgetGroupId}"]`);
+                if (targetMenuItem) {
+                    targetMenuItem.click();
+                }
+
+                const targetWidget = allWidgets.find(w => 
+                    w.querySelector('p').textContent === widgetText && 
+                    w.closest('.widget-group').id === widgetGroupId
+                );
+
+                if (targetWidget) {
+                    showWidgetDetail(targetWidget);
+                }
+
+                searchInput.value = '';
+                searchResultsContainer.innerHTML = '';
                 searchResultsContainer.style.display = 'none';
-            }
-        });
-
-        searchResultsContainer.addEventListener('click', (e) => {
-            const resultItem = e.target.closest('.search-result-item');
-            if (!resultItem) return;
-
-            const widgetText = resultItem.dataset.widgetText;
-            const widgetGroupId = resultItem.dataset.widgetGroup;
-
-            const targetMenuItem = document.querySelector(`.main-menu-item[data-target="${widgetGroupId}"]`);
-            if (targetMenuItem) {
-                targetMenuItem.click();
-            }
-
-            const targetWidget = allWidgets.find(w => 
-                w.querySelector('p').textContent === widgetText && 
-                w.closest('.widget-group').id === widgetGroupId
-            );
-
-            if (targetWidget) {
-                showWidgetDetail(targetWidget);
-            }
-
-            searchInput.value = '';
-            searchResultsContainer.innerHTML = '';
-            searchResultsContainer.style.display = 'none';
-        });
+            });
+        }
         
         // --- Popups & Mobile Menu ---
         setupPopup('bell-icon', 'notification-popup');
@@ -668,11 +731,13 @@
             });
         }
         
-        hamburgerMenu.addEventListener('click', (e) => {
-            e.stopPropagation();
-            sidebar.classList.toggle('mobile-open');
-            mobileOverlay.classList.toggle('active');
-        });
+        if (hamburgerMenu) {
+            hamburgerMenu.addEventListener('click', (e) => {
+                e.stopPropagation();
+                sidebar.classList.toggle('mobile-open');
+                mobileOverlay.classList.toggle('active');
+            });
+        }
 
         document.addEventListener('click', (e) => {
              document.querySelectorAll('.popup-menu.visible').forEach(p => p.classList.remove('visible'));

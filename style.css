@@ -1023,6 +1023,35 @@ body.dark-mode .search-result-item span {
     color: var(--dark-text-secondary);
 }
 
+/* --- Sidebar Mobile Controls --- */
+.sidebar-controls {
+    display: none; /* Hidden on desktop */
+    margin-top: auto; /* Pushes to the bottom */
+    padding-top: 10px;
+    border-top: 1px solid var(--dark-border);
+}
+
+.sidebar-control-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 15px;
+    font-size: 16px;
+    color: var(--sidebar-text-inactive);
+    text-decoration: none;
+}
+
+.sidebar-control-item .theme-switch {
+    margin-left: auto;
+    transform: scale(0.8); /* Make it a bit smaller */
+}
+.sidebar-control-item .icon-btn {
+    margin-left: auto;
+    background: none;
+    width: 32px;
+    height: 32px;
+}
+
 /* --- MOBILE RESPONSIVENESS --- */
 .hamburger-menu {
     display: none; /* Hidden by default on desktop */
@@ -1056,6 +1085,10 @@ body.dark-mode .search-result-item span {
 }
 
 @media (max-width: 768px) {
+    .sidebar-controls {
+        display: block;
+    }
+
     .hamburger-menu {
         display: flex;
     }

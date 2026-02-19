@@ -11,13 +11,42 @@
     <div class="container">
         <!-- Верхний бар -->
         <div class="top-bar">
-            <div class="hamburger-menu icon-btn">
-                <iconify-icon icon="mdi:menu"></iconify-icon>
-            </div>
             <div class="logo">
                 <a href="index.html"><img src="logo_inline.png" alt="Inline Telecom Solutions Logo"></a>
                 <a href="index.html" class="idddi-title">iDDI</a>
             </div>
+
+            <div class="top-menu">
+                 <div class="main-menu-item active" data-target="dashboards-widgets">
+                    <iconify-icon icon="pajamas:dashboard"></iconify-icon>
+                    <span class="title" data-lang-text="ru:Дашборды|en:Dashboards"></span>
+                </div>
+                <div class="main-menu-item" data-target="idns-widgets">
+                    <iconify-icon icon="eos-icons:dns"></iconify-icon>
+                    <span class="title" data-lang-text="ru:iDNS|en:iDNS"></span>
+                </div>
+                <div class="main-menu-item" data-target="idhcp-widgets">
+                    <iconify-icon icon="hugeicons:web-security"></iconify-icon>
+                    <span class="title" data-lang-text="ru:iDHCP|en:iDHCP"></span>
+                </div>
+                <div class="main-menu-item" data-target="ipam-widgets">
+                    <iconify-icon icon="eos-icons:ip"></iconify-icon>
+                    <span class="title" data-lang-text="ru:IPAM|en:IPAM"></span>
+                </div>
+                <div class="main-menu-item" data-target="admin-widgets">
+                    <iconify-icon icon="eos-icons:admin-outlined"></iconify-icon>
+                    <span class="title" data-lang-text="ru:Панель Админа|en:Admin Panel"></span>
+                </div>
+                <div class="main-menu-item" data-target="settings-widgets">
+                    <iconify-icon icon="ri:settings-4-fill"></iconify-icon>
+                    <span class="title" data-lang-text="ru:Настройки|en:Settings"></span>
+                </div>
+                <div class="main-menu-item" data-target="logs-widgets">
+                    <iconify-icon icon="octicon:log-16"></iconify-icon>
+                    <span class="title" data-lang-text="ru:Логи|en:Logs"></span>
+                </div>
+            </div>
+
             <div class="controls">
                 <div class="search-bar-container">
                     <div class="search-bar">
@@ -55,59 +84,6 @@
 
         <!-- Основной контент -->
         <div class="main-content">
-            <!-- Левая боковая панель -->
-            <div class="sidebar">
-                 <div class="main-menu-item active" data-target="dashboards-widgets">
-                    <iconify-icon icon="pajamas:dashboard"></iconify-icon>
-                    <span class="title" data-lang-text="ru:Дашборды|en:Dashboards"></span>
-                </div>
-                <div class="main-menu-item" data-target="idns-widgets">
-                    <iconify-icon icon="eos-icons:dns"></iconify-icon>
-                    <span class="title" data-lang-text="ru:iDNS|en:iDNS"></span>
-                </div>
-                <div class="main-menu-item" data-target="idhcp-widgets">
-                    <iconify-icon icon="hugeicons:web-security"></iconify-icon>
-                    <span class="title" data-lang-text="ru:iDHCP|en:iDHCP"></span>
-                </div>
-                <div class="main-menu-item" data-target="ipam-widgets">
-                    <iconify-icon icon="eos-icons:ip"></iconify-icon>
-                    <span class="title" data-lang-text="ru:IPAM|en:IPAM"></span>
-                </div>
-                <div class="main-menu-item" data-target="admin-widgets">
-                    <iconify-icon icon="eos-icons:admin-outlined"></iconify-icon>
-                    <span class="title" data-lang-text="ru:Панель Админа|en:Admin Panel"></span>
-                </div>
-                <div class="main-menu-item" data-target="settings-widgets">
-                    <iconify-icon icon="ri:settings-4-fill"></iconify-icon>
-                    <span class="title" data-lang-text="ru:Настройки|en:Settings"></span>
-                </div>
-                <div class="main-menu-item" data-target="logs-widgets">
-                    <iconify-icon icon="octicon:log-16"></iconify-icon>
-                    <span class="title" data-lang-text="ru:Логи|en:Logs"></span>
-                </div>
-
-                <div class="sidebar-controls">
-                    <a href="#" class="sidebar-control-item" id="sidebar-profile-btn">
-                        <iconify-icon icon="clarity:user-line"></iconify-icon>
-                        <span data-lang-text="ru:Профиль|en:Profile">Профиль</span>
-                    </a>
-                    <div class="sidebar-control-item">
-                        <iconify-icon icon="mdi:theme-light-dark"></iconify-icon>
-                        <span data-lang-text="ru:Тема|en:Theme">Тема</span>
-                        <div class="theme-switch" id="theme-switch-mobile">
-                            <div class="knob"></div>
-                        </div>
-                    </div>
-                     <div class="sidebar-control-item">
-                        <iconify-icon icon="mdi:translate"></iconify-icon>
-                        <span data-lang-text="ru:Язык|en:Language">Язык</span>
-                        <div class="icon-btn" id="lang-switcher-mobile">
-                            <iconify-icon icon="emojione:flag-for-russia" id="lang-icon-mobile"></iconify-icon>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Контейнер для переключаемых областей -->
             <div class="content-wrapper">
                 <!-- Область с виджетами -->
@@ -357,7 +333,7 @@
         const hamburgerMenu = document.querySelector('.hamburger-menu');
         const mobileOverlay = document.querySelector('.mobile-overlay');
         const sidebar = document.querySelector('.sidebar');
-        
+
         // Mobile & Sidebar Controls
         const sidebarProfileBtn = document.getElementById('sidebar-profile-btn');
         const themeSwitchMobile = document.getElementById('theme-switch-mobile');
@@ -390,7 +366,7 @@
             const icon = lang === 'ru' ? 'emojione:flag-for-russia' : 'emojione:flag-for-united-kingdom';
             if (langIcon) langIcon.setAttribute('icon', icon);
             if (langIconMobile) langIconMobile.setAttribute('icon', icon);
-            
+
             document.body.setAttribute('data-lang', lang);
             document.querySelectorAll('[data-lang-text]').forEach(el => {
                 const key = el.dataset.langText;
@@ -438,7 +414,7 @@
 
         function startMonitoringUpdates() {
             stopMonitoring();
-            
+
             monitoringIntervalId = setInterval(() => {
                 const cpuProgress = document.querySelector('.monitor-widget.cpu .progress');
                 const cpuText = document.querySelector('.monitor-widget.cpu p');
@@ -465,7 +441,7 @@
                 }
             }, 2000);
         }
-        
+
         function showPage(pageToShow) {
             stopMonitoring();
             pageAreas.forEach(page => page.classList.remove('active'));
@@ -477,7 +453,7 @@
                 menuItems.forEach(item => item.classList.remove('active'));
             }
         }
-        
+
         function showWidgetDetail(widgetElement) {
             stopMonitoring();
 
@@ -532,7 +508,7 @@
         // --- Event Listeners ---
         menuItems.forEach(item => {
             item.addEventListener('click', function() {
-                if (sidebar.classList.contains('mobile-open')) {
+                if (sidebar && sidebar.classList.contains('mobile-open')) {
                     sidebar.classList.remove('mobile-open');
                     mobileOverlay.classList.remove('active');
                 }
@@ -549,7 +525,7 @@
                         widgetsInGroup.forEach((widget, index) => {
                             // Reset animation before applying it again
                             widget.style.animation = 'none';
-                            void widget.offsetWidth; 
+                            void widget.offsetWidth;
                             widget.style.animation = '';
                             widget.style.animationDelay = `${index * 50}ms`;
                         });
@@ -558,7 +534,7 @@
                 showPage(widgetArea);
             });
         });
-        
+
         widgets.forEach(widget => {
             widget.addEventListener('click', () => showWidgetDetail(widget));
         });
@@ -576,7 +552,7 @@
                 }
             }
         });
-        
+
         breadcrumbs.addEventListener('click', (e) => {
             e.preventDefault();
             if (e.target.id === 'home-breadcrumb') {
@@ -596,7 +572,7 @@
                 showPage(profilePage);
             });
         }
-        
+
         if (sidebarProfileBtn) {
              sidebarProfileBtn.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -698,8 +674,8 @@
                     targetMenuItem.click();
                 }
 
-                const targetWidget = allWidgets.find(w => 
-                    w.querySelector('p').textContent === widgetText && 
+                const targetWidget = allWidgets.find(w =>
+                    w.querySelector('p').textContent === widgetText &&
                     w.closest('.widget-group').id === widgetGroupId
                 );
 
@@ -712,16 +688,16 @@
                 searchResultsContainer.style.display = 'none';
             });
         }
-        
+
         // --- Popups & Mobile Menu ---
         setupPopup('bell-icon', 'notification-popup');
         setupPopup('user-avatar', 'profile-dropdown');
-        
+
         function setupPopup(triggerId, popupId) {
             const trigger = document.getElementById(triggerId);
             const popup = document.getElementById(popupId);
             if (!trigger || !popup) return;
-            
+
             trigger.addEventListener('click', (event) => {
                 event.stopPropagation();
                 document.querySelectorAll('.popup-menu.visible').forEach(p => {
@@ -730,7 +706,7 @@
                 popup.classList.toggle('visible');
             });
         }
-        
+
         if (hamburgerMenu) {
             hamburgerMenu.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -741,8 +717,8 @@
 
         document.addEventListener('click', (e) => {
              document.querySelectorAll('.popup-menu.visible').forEach(p => p.classList.remove('visible'));
-             
-             if (sidebar.classList.contains('mobile-open') && !e.target.closest('.sidebar') && !e.target.closest('.hamburger-menu')) {
+
+             if (sidebar && sidebar.classList.contains('mobile-open') && !e.target.closest('.sidebar') && !e.target.closest('.hamburger-menu')) {
                 sidebar.classList.remove('mobile-open');
                 mobileOverlay.classList.remove('active');
              }
@@ -785,7 +761,7 @@
                 e.preventDefault();
                 passwordChangeForm.classList.add('hidden');
             });
-            
+
             function checkPasswordStrength(password) {
                 let strength = 0;
                 if (password.length >= 8) strength++;
@@ -834,7 +810,7 @@
             function toggleSaveButton() {
                 saveProfileBtn.disabled = !hasFormChanged();
             }
-            
+
             [profileForm, interfaceForm].forEach(form => {
                 form.addEventListener('input', toggleSaveButton);
                 form.addEventListener('change', toggleSaveButton);
@@ -842,8 +818,8 @@
 
             saveProfileBtn.addEventListener('click', () => {
                 alert('Настройки профиля сохранены!');
-                saveInitialFormState(); 
-                toggleSaveButton(); 
+                saveInitialFormState();
+                toggleSaveButton();
             });
 
             cancelProfileBtn.addEventListener('click', () => {
@@ -857,7 +833,7 @@
                 toggleSaveButton();
                 alert('Изменения отменены.');
             });
-            
+
             saveInitialFormState();
             toggleSaveButton();
 

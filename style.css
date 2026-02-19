@@ -62,22 +62,52 @@ body.dark-mode {
     box-sizing: border-box;
     flex-shrink: 0;
     transition: background-color var(--transition-medium), border-color var(--transition-medium);
+    gap: 20px;
 }
 body.dark-mode .top-bar { background-color: var(--dark-surface); border-color: var(--dark-border); }
 
 .logo {
     display: flex;
     align-items: center;
+    flex-shrink: 0;
 }
 
 .logo img {
-    height: 55px;
+    height: 50px;
     width: auto;
     object-fit: contain;
-    border: 1px solid var(--light-border); /* Добавляем рамку для лучшей видимости */
 }
 
-.controls { display: flex; align-items: center; gap: 20px; }
+.top-menu {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-grow: 1;
+    justify-content: center;
+}
+
+.main-menu-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--sidebar-text-inactive);
+    transition: color var(--transition-fast), background-color var(--transition-fast);
+    white-space: nowrap;
+}
+.main-menu-item iconify-icon { font-size: 24px; margin-right: 10px; }
+.main-menu-item .title { font-size: 16px; font-weight: 500; }
+
+.main-menu-item:hover { background-color: var(--sidebar-hover); color: var(--sidebar-text); }
+.main-menu-item.active {
+    background-color: var(--sidebar-active-bg);
+    color: var(--sidebar-active-text);
+    font-weight: 700;
+}
+
+.controls { display: flex; align-items: center; gap: 15px; flex-shrink: 0; }
+
 
 .search-bar {
     display: flex;
@@ -168,40 +198,6 @@ body.dark-mode .icon-btn iconify-icon, body.dark-mode .search-bar iconify-icon {
     overflow: hidden;
 }
 
-/* --- ЛЕВАЯ БОКОВАЯ ПАНЕЛЬ (ГЛАВНОЕ МЕНЮ) --- */
-.sidebar {
-    width: 300px;
-    height: 100%;
-    background-color: var(--sidebar-bg);
-    padding: 10px;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    flex-shrink: 0;
-    overflow-y: auto;
-    transition: background-color var(--transition-medium);
-}
-
-.main-menu-item {
-    display: flex;
-    align-items: center;
-    padding: 12px 15px;
-    border-radius: 8px;
-    cursor: pointer;
-    color: var(--sidebar-text-inactive);
-    transition: color var(--transition-fast), background-color var(--transition-fast);
-}
-.main-menu-item iconify-icon { font-size: 24px; margin-right: 15px; }
-.main-menu-item .title { font-size: 18px; font-weight: 500; }
-
-.main-menu-item:hover { background-color: var(--sidebar-hover); color: var(--sidebar-text); }
-.main-menu-item.active {
-    background-color: var(--sidebar-active-bg);
-    color: var(--sidebar-active-text);
-    font-weight: 700;
-}
-
 /* --- ОБЛАСТЬ С ВИДЖЕТАМИ --- */
 .widget-area {
     flex-grow: 1;
@@ -226,8 +222,8 @@ body.dark-mode .icon-btn iconify-icon, body.dark-mode .search-bar iconify-icon {
     }
 }
 
-.widget-group.active { 
-    display: grid; 
+.widget-group.active {
+    display: grid;
 }
 
 /* Добавляем анимацию для виджетов внутри активной группы */

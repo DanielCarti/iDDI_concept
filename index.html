@@ -48,6 +48,9 @@
             </div>
 
             <div class="controls">
+                <div class="clock-pill" id="top-bar-clock">
+                    <span class="hours">00</span><span class="sep">:</span><span class="minutes">00</span><span class="sep">:</span><span class="seconds">00</span>
+                </div>
                 <div class="search-bar-container">
                     <div class="search-bar">
                         <iconify-icon icon="eva:search-outline"></iconify-icon>
@@ -333,6 +336,7 @@
         const hamburgerMenu = document.querySelector('.hamburger-menu');
         const mobileOverlay = document.querySelector('.mobile-overlay');
         const sidebar = document.querySelector('.sidebar');
+        const topBarClock = document.getElementById('top-bar-clock');
 
         // Mobile & Sidebar Controls
         const sidebarProfileBtn = document.getElementById('sidebar-profile-btn');
@@ -361,6 +365,24 @@
         });
 
         // --- Functions ---
+        function updateTopBarClock() {
+            if (!topBarClock) return;
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            
+            const hEl = topBarClock.querySelector('.hours');
+            const mEl = topBarClock.querySelector('.minutes');
+            const sEl = topBarClock.querySelector('.seconds');
+            
+            if (hEl) hEl.textContent = hours;
+            if (mEl) mEl.textContent = minutes;
+            if (sEl) sEl.textContent = seconds;
+        }
+        setInterval(updateTopBarClock, 1000);
+        updateTopBarClock();
+
         function updateLanguage(lang) {
             if (!lang) return;
             const icon = lang === 'ru' ? 'emojione:flag-for-russia' : 'emojione:flag-for-united-kingdom';

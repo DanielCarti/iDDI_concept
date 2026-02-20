@@ -238,9 +238,9 @@
                 <!-- Страница настроек профиля -->
                 <div id="profile-page" class="page-area">
                     <div class="profile-menu">
-                        <a href="#" class="profile-menu-item active" data-target="profile-main-data-section">Основные данные</a>
-                        <a href="#" class="profile-menu-item" data-target="profile-interface-section">Интерфейс</a>
-                        <a href="#" class="profile-menu-item" data-target="profile-history-section">История авторизаций</a>
+                        <a href="#" class="profile-menu-item active" data-target="profile-main-data-section" data-lang-text="ru:Основные данные|en:Main Data">Основные данные</a>
+                        <a href="#" class="profile-menu-item" data-target="profile-interface-section" data-lang-text="ru:Интерфейс|en:Interface">Интерфейс</a>
+                        <a href="#" class="profile-menu-item" data-target="profile-history-section" data-lang-text="ru:История авторизаций|en:Auth History">История авторизаций</a>
                     </div>
                     <div class="profile-content">
                         <div id="profile-main-data-section" class="profile-section active">
@@ -702,6 +702,7 @@
         if (profileSettingsBtn) {
             profileSettingsBtn.addEventListener('click', function(e) {
                 e.preventDefault();
+                e.stopPropagation(); // Предотвращаем всплытие клика к аватару
                 document.querySelectorAll('.popup-menu.visible').forEach(p => p.classList.remove('visible'));
                 showPage(profilePage);
             });

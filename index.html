@@ -59,7 +59,10 @@
                     <div id="search-results" class="search-results-popup"></div>
                 </div>
                 <div class="theme-switch active">
-                    <div class="knob"></div>
+                    <div class="knob">
+                        <iconify-icon icon="line-md:sunny-filled-loop" class="sun-icon"></iconify-icon>
+                        <iconify-icon icon="line-md:moon-filled-loop" class="moon-icon"></iconify-icon>
+                    </div>
                 </div>
                 <div class="icon-btn" id="bell-icon">
                     <iconify-icon icon="clarity:notification-line"></iconify-icon>
@@ -97,23 +100,36 @@
                         <div class="widget"><iconify-icon icon="ic:outline-monitor"></iconify-icon><p data-lang-text="ru:Мониторинг|en:Monitoring"></p></div>
                         <div class="widget"><iconify-icon icon="clarity:settings-line"></iconify-icon><p data-lang-text="ru:Настройки виджетов|en:Widget settings"></p></div>
                     </div>
-                    <!-- Группа виджетов для iDNS -->
+                    <!-- Группа виджетов для iDNS (Оптимизированная) -->
                     <div class="widget-group" id="idns-widgets">
-                        <div class="widget"><iconify-icon icon="mdi:dns-outline"></iconify-icon><p data-lang-text="ru:Зоны DNS|en:DNS Zones"></p></div>
-                        <div class="widget"><iconify-icon icon="material-symbols:note-outline"></iconify-icon><p data-lang-text="ru:Ресурсные записи|en:Resource Records"></p></div>
-                        <div class="widget"><iconify-icon icon="mdi:shield-check-outline"></iconify-icon><p data-lang-text="ru:DNSSEC|en:DNSSEC"></p></div>
-                        <div class="widget"><iconify-icon icon="iconoir:pc-firewall"></iconify-icon><p data-lang-text="ru:DNS Firewall|en:DNS Firewall"></p></div>
-                        <div class="widget"><iconify-icon icon="mdi:database-search-outline"></iconify-icon><p data-lang-text="ru:Журнал запросов|en:Query Log"></p></div>
-                        <div class="widget"><iconify-icon icon="tabler:template"></iconify-icon><p data-lang-text="ru:Шаблоны зоны|en:Zone Templates"></p></div>
-                        <div class="widget"><iconify-icon icon="mdi:swap-horizontal-bold"></iconify-icon><p data-lang-text="ru:Переадресации|en:Forwarding"></p></div>
-                        <div class="widget"><iconify-icon icon="carbon:subnet-acl-rules"></iconify-icon><p data-lang-text="ru:ACL|en:ACL"></p></div>
-                        <div class="widget"><iconify-icon icon="akar-icons:statistic-up"></iconify-icon><p data-lang-text="ru:Статистика DNS|en:DNS Statistics"></p></div>
-                        <div class="widget"><iconify-icon icon="mdi:calendar-clock-outline"></iconify-icon><p data-lang-text="ru:Управление задачами (Расписание)|en:Task Management (Schedule)"></p></div>
-                        <div class="widget"><iconify-icon icon="mdi:server-network"></iconify-icon><p data-lang-text="ru:Управление сырыми конфигурациями узлов|en:Raw Node Configurations"></p></div>
-                        <div class="widget"><iconify-icon icon="mdi:format-list-checks"></iconify-icon><p data-lang-text="ru:Работа с записями правил|en:Rule Records Management"></p></div>
-                        <div class="widget"><iconify-icon icon="mdi:file-tree"></iconify-icon><p data-lang-text="ru:Управление схемами правил, директив и файлов конфигурации|en:Rule, Directive and Configuration File Schema Management"></p></div>
-                        <div class="widget"><iconify-icon icon="akar-icons:statistic-up"></iconify-icon><p data-lang-text="ru:Метрики|en:Metrics"></p></div>
-                        <div class="widget"><iconify-icon icon="carbon:network-enterprise"></iconify-icon><p data-lang-text="ru:Управление узлами|en:Node Management"></p></div>
+                        <div class="widget">
+                            <iconify-icon icon="mdi:dns-outline"></iconify-icon>
+                            <p data-lang-text="ru:Зоны DNS|en:DNS Zones"></p>
+                        </div>
+                        <div class="widget">
+                            <iconify-icon icon="carbon:network-enterprise"></iconify-icon>
+                            <p data-lang-text="ru:Управление узлами|en:Node Management"></p>
+                        </div>
+                        <div class="widget">
+                            <iconify-icon icon="ri:settings-4-fill"></iconify-icon>
+                            <p data-lang-text="ru:Настройки iDNS|en:iDNS Settings"></p>
+                        </div>
+                        <div class="widget">
+                            <iconify-icon icon="mdi:shield-check-outline"></iconify-icon>
+                            <p data-lang-text="ru:DNSSEC|en:DNSSEC"></p>
+                        </div>
+                        <div class="widget">
+                            <iconify-icon icon="mdi:database-search-outline"></iconify-icon>
+                            <p data-lang-text="ru:Журналы|en:Logs"></p>
+                        </div>
+                        <div class="widget">
+                            <iconify-icon icon="carbon:subnet-acl-rules"></iconify-icon>
+                            <p data-lang-text="ru:ACL и Безопасность|en:ACL & Security"></p>
+                        </div>
+                        <div class="widget">
+                            <iconify-icon icon="akar-icons:statistic-up"></iconify-icon>
+                            <p data-lang-text="ru:Статистика и Метрики|en:Statistics & Metrics"></p>
+                        </div>
                     </div>
                     <!-- Группа виджетов для iDHCP -->
                     <div class="widget-group" id="idhcp-widgets">
@@ -385,30 +401,46 @@
 
         function updateLanguage(lang) {
             if (!lang) return;
-            const icon = lang === 'ru' ? 'emojione:flag-for-russia' : 'emojione:flag-for-united-kingdom';
-            if (langIcon) langIcon.setAttribute('icon', icon);
-            if (langIconMobile) langIconMobile.setAttribute('icon', icon);
+            
+            // Анимация иконки флага
+            langSwitcher.classList.add('lang-switching');
+            
+            // Анимация затухания текста
+            const elements = document.querySelectorAll('[data-lang-text], [data-lang-placeholder]');
+            elements.forEach(el => el.classList.add('lang-fade-out'));
 
-            document.body.setAttribute('data-lang', lang);
-            document.querySelectorAll('[data-lang-text]').forEach(el => {
-                const key = el.dataset.langText;
-                const target = el.querySelector('span') || el;
-                if(target && translations[key] && translations[key][lang] !== undefined) {
-                     if (el.tagName === 'LABEL' || !target.matches('span')) {
-                        el.innerHTML = translations[key][lang];
-                    } else {
-                        target.innerHTML = translations[key][lang];
+            setTimeout(() => {
+                const icon = lang === 'ru' ? 'emojione:flag-for-russia' : 'emojione:flag-for-united-kingdom';
+                if (langIcon) langIcon.setAttribute('icon', icon);
+                if (langIconMobile) langIconMobile.setAttribute('icon', icon);
+
+                document.body.setAttribute('data-lang', lang);
+                document.querySelectorAll('[data-lang-text]').forEach(el => {
+                    const key = el.dataset.langText;
+                    const target = el.querySelector('span') || el;
+                    if(target && translations[key] && translations[key][lang] !== undefined) {
+                         if (el.tagName === 'LABEL' || !target.matches('span')) {
+                            el.innerHTML = translations[key][lang];
+                        } else {
+                            target.innerHTML = translations[key][lang];
+                        }
                     }
+                });
+                document.querySelectorAll('[data-lang-placeholder]').forEach(el => {
+                     if (el.dataset.langPlaceholder && translations[el.dataset.langPlaceholder] && translations[el.dataset.langPlaceholder][lang] !== undefined) {
+                        el.setAttribute('placeholder', translations[el.dataset.langPlaceholder][lang]);
+                    }
+                });
+                if(interfaceLanguageSelect) {
+                    interfaceLanguageSelect.value = lang;
                 }
-            });
-            document.querySelectorAll('[data-lang-placeholder]').forEach(el => {
-                 if (el.dataset.langPlaceholder && translations[el.dataset.langPlaceholder] && translations[el.dataset.langPlaceholder][lang] !== undefined) {
-                    el.setAttribute('placeholder', translations[el.dataset.langPlaceholder][lang]);
-                }
-            });
-            if(interfaceLanguageSelect) {
-                interfaceLanguageSelect.value = lang;
-            }
+
+                // Убираем классы анимации
+                setTimeout(() => {
+                    langSwitcher.classList.remove('lang-switching');
+                    elements.forEach(el => el.classList.remove('lang-fade-out'));
+                }, 50);
+            }, 200);
         }
 
         function applyTheme(theme) {

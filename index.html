@@ -579,7 +579,9 @@
             const allWidgetsInGroup = widgetGroup.querySelectorAll('.widget');
 
             allWidgetsInGroup.forEach(widget => {
-                const widgetText = widget.querySelector('p').textContent;
+                const widgetTextEl = widget.querySelector('p');
+                const widgetText = widgetTextEl.textContent;
+                const widgetLangKey = widgetTextEl.dataset.langText; // Получаем ключ перевода
                 const widgetIcon = widget.querySelector('iconify-icon').getAttribute('icon');
                 
                 const navItem = document.createElement('div');
@@ -593,6 +595,7 @@
                 // Создаем текст
                 const textEl = document.createElement('span');
                 textEl.textContent = widgetText;
+                textEl.dataset.langText = widgetLangKey; // Присваиваем ключ перевода!
                 navItem.appendChild(textEl);
                 
                 // Проверяем иерархию (для iDNS)

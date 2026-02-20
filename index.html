@@ -100,35 +100,88 @@
                         <div class="widget"><iconify-icon icon="ic:outline-monitor"></iconify-icon><p data-lang-text="ru:Мониторинг|en:Monitoring"></p></div>
                         <div class="widget"><iconify-icon icon="clarity:settings-line"></iconify-icon><p data-lang-text="ru:Настройки виджетов|en:Widget settings"></p></div>
                     </div>
-                    <!-- Группа виджетов для iDNS (Оптимизированная) -->
+                    <!-- Группа виджетов для iDNS (Оптимизированная с вложенностью) -->
                     <div class="widget-group" id="idns-widgets">
-                        <div class="widget">
+                        <!-- 1. Зоны DNS -->
+                        <div class="widget main-cat" data-cat="zones">
                             <iconify-icon icon="mdi:dns-outline"></iconify-icon>
                             <p data-lang-text="ru:Зоны DNS|en:DNS Zones"></p>
                         </div>
-                        <div class="widget">
+                        <div class="widget sub-widget" data-cat="zones">
+                            <iconify-icon icon="material-symbols:note-outline"></iconify-icon>
+                            <p data-lang-text="ru:Ресурсные записи|en:Resource Records"></p>
+                        </div>
+                        <div class="widget sub-widget" data-cat="zones">
+                            <iconify-icon icon="tabler:template"></iconify-icon>
+                            <p data-lang-text="ru:Шаблоны зоны|en:Zone Templates"></p>
+                        </div>
+                        <div class="widget sub-widget" data-cat="zones">
+                            <iconify-icon icon="mdi:swap-horizontal-bold"></iconify-icon>
+                            <p data-lang-text="ru:Переадресации|en:Forwarding"></p>
+                        </div>
+
+                        <!-- 2. Управление узлами -->
+                        <div class="widget main-cat" data-cat="nodes">
                             <iconify-icon icon="carbon:network-enterprise"></iconify-icon>
                             <p data-lang-text="ru:Управление узлами|en:Node Management"></p>
                         </div>
-                        <div class="widget">
+                        <div class="widget sub-widget" data-cat="nodes">
+                            <iconify-icon icon="mdi:server-network"></iconify-icon>
+                            <p data-lang-text="ru:Управление сырыми конфигурациями узлов|en:Raw Node Configurations"></p>
+                        </div>
+
+                        <!-- 3. Настройки iDNS -->
+                        <div class="widget main-cat" data-cat="settings">
                             <iconify-icon icon="ri:settings-4-fill"></iconify-icon>
                             <p data-lang-text="ru:Настройки iDNS|en:iDNS Settings"></p>
                         </div>
-                        <div class="widget">
+                        <div class="widget sub-widget" data-cat="settings">
+                            <iconify-icon icon="mdi:calendar-clock-outline"></iconify-icon>
+                            <p data-lang-text="ru:Управление задачами (Расписание)|en:Task Management (Schedule)"></p>
+                        </div>
+                        <div class="widget sub-widget" data-cat="settings">
+                            <iconify-icon icon="mdi:file-tree"></iconify-icon>
+                            <p data-lang-text="ru:Управление схемами правил|en:Rule Schema Management"></p>
+                        </div>
+
+                        <!-- 4. DNSSEC -->
+                        <div class="widget main-cat" data-cat="dnssec">
                             <iconify-icon icon="mdi:shield-check-outline"></iconify-icon>
                             <p data-lang-text="ru:DNSSEC|en:DNSSEC"></p>
                         </div>
-                        <div class="widget">
+
+                        <!-- 5. Журналы -->
+                        <div class="widget main-cat" data-cat="logs">
                             <iconify-icon icon="mdi:database-search-outline"></iconify-icon>
                             <p data-lang-text="ru:Журналы|en:Logs"></p>
                         </div>
-                        <div class="widget">
+                        <div class="widget sub-widget" data-cat="logs">
+                            <iconify-icon icon="mdi:database-search-outline"></iconify-icon>
+                            <p data-lang-text="ru:Журнал запросов|en:Query Log"></p>
+                        </div>
+
+                        <!-- 6. ACL и Безопасность -->
+                        <div class="widget main-cat" data-cat="security">
                             <iconify-icon icon="carbon:subnet-acl-rules"></iconify-icon>
                             <p data-lang-text="ru:ACL и Безопасность|en:ACL & Security"></p>
                         </div>
-                        <div class="widget">
+                        <div class="widget sub-widget" data-cat="security">
+                            <iconify-icon icon="iconoir:pc-firewall"></iconify-icon>
+                            <p data-lang-text="ru:DNS Firewall|en:DNS Firewall"></p>
+                        </div>
+                        <div class="widget sub-widget" data-cat="security">
+                            <iconify-icon icon="mdi:format-list-checks"></iconify-icon>
+                            <p data-lang-text="ru:Работа с записями правил|en:Rule Records Management"></p>
+                        </div>
+
+                        <!-- 7. Статистика и Метрики -->
+                        <div class="widget main-cat" data-cat="stats">
                             <iconify-icon icon="akar-icons:statistic-up"></iconify-icon>
                             <p data-lang-text="ru:Статистика и Метрики|en:Statistics & Metrics"></p>
+                        </div>
+                        <div class="widget sub-widget" data-cat="stats">
+                            <iconify-icon icon="akar-icons:statistic-up"></iconify-icon>
+                            <p data-lang-text="ru:Метрики|en:Metrics"></p>
                         </div>
                     </div>
                     <!-- Группа виджетов для iDHCP -->
@@ -521,14 +574,37 @@
             contextNav.style.display = 'flex';
 
             tileNavigation.innerHTML = '';
-            widgetGroup.querySelectorAll('.widget').forEach(sibling => {
-                const siblingText = sibling.querySelector('p').textContent;
+            
+            // Получаем все виджеты группы и строим дерево
+            const allWidgetsInGroup = widgetGroup.querySelectorAll('.widget');
+
+            allWidgetsInGroup.forEach(widget => {
+                const widgetText = widget.querySelector('p').textContent;
+                const widgetIcon = widget.querySelector('iconify-icon').getAttribute('icon');
+                
                 const navItem = document.createElement('div');
                 navItem.classList.add('tile-nav-item');
-                if (siblingText === clickedWidgetText) {
+                
+                // Создаем иконку
+                const iconEl = document.createElement('iconify-icon');
+                iconEl.setAttribute('icon', widgetIcon);
+                navItem.appendChild(iconEl);
+
+                // Создаем текст
+                const textEl = document.createElement('span');
+                textEl.textContent = widgetText;
+                navItem.appendChild(textEl);
+                
+                // Проверяем иерархию (для iDNS)
+                if (widget.classList.contains('main-cat')) {
+                    navItem.classList.add('nav-parent');
+                } else if (widget.classList.contains('sub-widget')) {
+                    navItem.classList.add('nav-child');
+                }
+
+                if (widgetText === clickedWidgetText) {
                     navItem.classList.add('active');
                 }
-                navItem.textContent = siblingText;
                 tileNavigation.appendChild(navItem);
             });
 

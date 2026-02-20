@@ -670,8 +670,9 @@
         });
 
         tileNavigation.addEventListener('click', (e) => {
-            if (e.target.classList.contains('tile-nav-item')) {
-                const widgetText = e.target.textContent;
+            const navItem = e.target.closest('.tile-nav-item');
+            if (navItem) {
+                const widgetText = navItem.textContent;
                 const activeMenuItem = document.querySelector('.main-menu-item.active');
                 if (!activeMenuItem) return;
                 const activeWidgetGroup = activeMenuItem.dataset.target;
